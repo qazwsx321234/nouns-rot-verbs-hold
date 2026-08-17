@@ -168,7 +168,8 @@
   /* ══════════ shell ══════════ */
 
   .shell { margin-top: 4.5rem; }
-  .index { display: none; }
+  .index { display: block; margin: 0 0 2.75rem; }
+  .index .label { display: block; margin: 0 0 .7rem; }
 
   .index a {
     display: block;
@@ -182,13 +183,29 @@
     border-left: 2px solid var(--rule-soft);
   }
 
+  .index a {
+    display: inline-block;
+    border-left: 0;
+    border-bottom: 2px solid var(--rule-soft);
+    padding: .32rem .55rem;
+    margin: 0 .3rem .35rem 0;
+  }
+
   .index a:hover { color: var(--ink); }
-  .index a.is-current { color: var(--ink); border-left-color: var(--holds); }
+  .index a.is-current { color: var(--ink); border-bottom-color: var(--holds); }
 
   @media (min-width: 62rem) {
     .shell { display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: 3.5rem; align-items: start; }
-    .index { display: block; position: sticky; top: 2.5rem; }
-    .index .label { display: block; margin: 0 0 .9rem .8rem; }
+    .index { position: sticky; top: 2.5rem; margin: 0; }
+    .index .label { margin: 0 0 .9rem .8rem; }
+    .index a {
+      display: block;
+      border-left: 2px solid var(--rule-soft);
+      border-bottom: 0;
+      padding: .42rem 0 .42rem .8rem;
+      margin: 0;
+    }
+    .index a.is-current { border-left-color: var(--holds); }
   }
 
   /* ══════════ sections ══════════ */
@@ -218,7 +235,7 @@
     margin: 2.4rem 0 .7rem;
   }
 
-  h4 {
+  h4, .micro {
     font-family: var(--mono);
     font-size: var(--s-xs);
     font-weight: 600;
@@ -306,7 +323,7 @@
 
   /* ══════════ ladder ══════════ */
 
-  .ladder { display: flex; flex-direction: column-reverse; gap: .45rem; margin: 1.75rem 0 2rem; }
+  .ladder { display: flex; flex-direction: column; gap: .45rem; margin: 1.75rem 0 2rem; }
 
   .rung {
     display: grid;
@@ -319,8 +336,8 @@
     animation: rise .5s cubic-bezier(.2,.7,.3,1) backwards;
   }
 
-  .rung:nth-child(1) { animation-delay: .2s; }
   .rung:nth-child(2) { animation-delay: .1s; }
+  .rung:nth-child(3) { animation-delay: .2s; }
 
   .rung-n { font-family: var(--mono); font-size: var(--s-sm); font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
   .rung-name { font-family: var(--mono); font-size: var(--s-sm); letter-spacing: .09em; text-transform: uppercase; display: block; margin-bottom: .3rem; }
@@ -411,10 +428,6 @@
 
     <dl class="facts">
       <div class="fact">
-        <dt class="label">Depth</dt>
-        <dd>Agent reliability &middot; MCP &amp; tool architecture &middot; guardrails &middot; evaluation</dd>
-      </div>
-      <div class="fact">
         <dt class="label">Stack</dt>
         <dd>Python &middot; Claude Code &middot; MCP &middot; LLM APIs &middot; Chrome/CDP &middot; JS &middot; Unity</dd>
       </div>
@@ -462,24 +475,24 @@
 
         <div class="caps">
           <div class="cap">
-            <span class="cap-name">Agents that run unattended</span>
+            <h3 class="cap-name">Agents that run unattended</h3>
             <p>Long-running loops that decide and act with nobody in the chair: state derived on every pass, obligations wired into the runtime, and a resume path that survives a context reset in the middle of a task.</p>
           </div>
           <div class="cap">
-            <span class="cap-name">Tool and MCP architecture</span>
+            <h3 class="cap-name">Tool and MCP architecture</h3>
             <p>The tool surface an agent calls, including the unglamorous parts that decide whether it works: what a tool returns when it half-succeeds, where a timeout lands, how a failure is stopped from being narrated as a success.</p>
           </div>
           <div class="cap">
-            <span class="cap-name">Guardrails and refusal design</span>
+            <h3 class="cap-name">Guardrails and refusal design</h3>
             <p>Enforcement at the chokepoint &mdash; an exit code, a tool deny, a hook that blocks the turn from ending. Including the honest half: which guards can be routed around, and by what.</p>
           </div>
           <div class="cap">
-            <span class="cap-name">Evaluation and measurement</span>
+            <h3 class="cap-name">Evaluation and measurement</h3>
             <p>The layer that tells you whether you have anything: control groups for agent behaviour, replay harnesses scoring decisions against blinded historical data, and pre-registration so a result keeps its shape after it arrives.</p>
           </div>
         </div>
 
-        <h4>Open on the rest</h4>
+        <h3 class="micro">Open on the rest</h3>
         <p>That is expertise, not a menu. I like problems I have not met before, and the methods travel &mdash; it is the same problem in a support workflow, a data pipeline or a build system as it is in a trading loop. If it is something I have not built yet, that is a reason I want it.</p>
       </section>
 
@@ -507,7 +520,7 @@
       <section id="work">
         <span class="label">Selected work</span>
         <h2>Six systems, and what each one took</h2>
-        <p>These are private &mdash; live systems, no published repos. What follows is the engineering at the level of detail a technical buyer can judge. I walk through the code directly on a call.</p>
+        <p>These are private, live systems, with one exception below whose whole source is the page you can open. What follows is the engineering at the level of detail a technical buyer can judge. I walk through the code directly on a call.</p>
 
         <article class="card">
           <div class="card-top">
@@ -515,8 +528,8 @@
             <span class="label">Apr &rarr; Aug 2026 &middot; sole engineer: design, build, operation</span>
           </div>
           <h3>An AI agent operating unattended against a live account</h3>
-          <p>An orchestrator that read live market data, formed a view, armed conditional triggers, submitted real orders through an MCP tool surface, and scored its own decisions after the close to change how the next session ran. It ran live for four months at a deliberately reduced size, as a testbed whose objective was the agent's learning rate rather than its return.</p>
-          <p><strong>The measurement layer is what I would point at.</strong> It was built to score the decisions the system rejected as well as the ones it took, and when it did, it redirected the programme &mdash; into the pre-registered falsification pipeline described in the next card, which is where the work is now. A system that can tell you to change course is the harder build; the loop was only where it ran.</p>
+          <p>An orchestrator that read live market data, formed a view, armed conditional triggers, submitted real orders through an MCP tool surface, and scored its own decisions after the close to change how the next session ran. It ran live for four months. Partway through I cut size to a tenth and ran the rest as a testbed whose objective was the agent's learning rate rather than its return.</p>
+          <p><strong>The measurement layer is what I would point at.</strong> Once I had built it to score the decisions the system rejected as well as the ones it took, it redirected the programme &mdash; into the pre-registered falsification pipeline described in the next card, which is where the work is now. A system that can tell you to change course is the harder build; the loop was only where it ran.</p>
           <div class="took">
             <span class="label">What it took</span>
             <p>Two MCP servers. One built from scratch: seven tools over a swappable broker backend, a safety layer between the model and the order, and an integration bench simulating broker timeouts, rate limits and kill-switch fire. One third-party server patched in place, because its behaviour was wrong in a way that mattered and waiting for upstream was not an option.</p>
@@ -540,7 +553,7 @@
           <p>The current work. Each hypothesis has its full specification frozen as a SHA-256 hash in an append-only, hash-chained registry before anything executes; the fork-test runner refuses to start when a spec's hash no longer matches its registration, and the chain makes drift in every other spec detectable after the fact. Results land in the same ledger as the claims they test, next to the sensitivity bound that limits what each is allowed to conclude.</p>
           <div class="took">
             <span class="label">What it took</span>
-            <p>A findings ledger past three hundred entries, most carrying their evidence and their own limits. Gauges that read the ledger rather than a summary of it &mdash; plus a regression test asserting that a retraction is representable at all, added after I found that an append-only log and a read-every-row-as-current gauge are individually reasonable and jointly incapable of reporting that something was withdrawn. A stopping rule signed in advance and enforced in code, so the programme can be closed on evidence. An adversarial review seat that is given the proposal and the project's known anti-patterns and told to break it, carrying its own disclosed limitation: the brief it receives was written by the author.</p>
+            <p>A findings ledger past three hundred entries, most carrying their evidence and their own limits. Gauges that read the ledger rather than a summary of it, plus a regression test asserting that a retraction is representable at all &mdash; the reason for which is further down. A stopping rule signed in advance and enforced in code, so the programme can be closed on evidence rather than on mood.</p>
           </div>
           <div class="figures">
             <div class="fig"><b>320+</b><span>recorded findings</span></div>
@@ -579,7 +592,7 @@
           <p>A local vector store built from 273 recorded lectures &mdash; transcription, chunking, embedding, and a query surface the running agent calls while it works. A second collection indexes the project's own accumulated lessons, so past mistakes are retrievable by meaning.</p>
           <div class="took">
             <span class="label">What it took</span>
-            <p>An idempotent ingestion pipeline, and a health check that asserts the exact expected chunk count at session start &mdash; because the failure mode of a rebuild is not an error, it is a store that is quietly two-thirds full and answers every question slightly wrong. Retrieval runs as batteries: the same question asked several ways, so one unlucky embedding does not decide an answer alone.</p>
+            <p>An idempotent ingestion pipeline, and a health check that compares the chunk count against the exact expected value at session start &mdash; because the failure mode of a rebuild is not an error, it is a store that is quietly two-thirds full and answers every question slightly wrong. Retrieval runs as batteries: the same question asked several ways, so one unlucky embedding does not decide an answer alone.</p>
           </div>
           <div class="figures">
             <div class="fig"><b>8,553</b><span>indexed chunks</span></div>
@@ -689,7 +702,7 @@
             <path class="dg-dash" d="M221 252 L221 170" marker-end="url(#ahd)"></path>
             <text class="dg-s" x="231" y="240">what the last session learned</text>
           </svg>
-          <figcaption>Three marked points may refuse: the capital gate, the pre-flight arithmetic and the turn-end hook. Everything else advises. Keeping that number small is a design constraint enforced by an audit that fails the build.</figcaption>
+          <figcaption>Three marked points may refuse: the capital gate, the pre-flight arithmetic and the turn-end hook. Everything else advises. How many may refuse is budgeted and re-counted at session start &mdash; that count warns rather than blocks, which by my own ladder makes it a noun, and I would rather say so than let it read as enforcement.</figcaption>
         </figure>
       </section>
 
@@ -697,14 +710,14 @@
       <section id="ladder">
         <span class="label">Durability</span>
         <h2>The durability ladder</h2>
-        <p>Across 27 fixes I shipped and then tracked, roughly half held and half decayed, and the split fell along one axis: not correctness, not importance, but <strong>the location of authority</strong>.</p>
+        <p>Across 27 fixes I shipped and then tracked, roughly half held and half decayed, and the split lined up with one candidate axis: not correctness, not importance, but <strong>the location of authority</strong>. Read the caveat below before you believe it &mdash; in this sample I cannot separate that axis from a second one.</p>
 
         <div class="ladder">
-          <div class="rung rung--holds">
-            <span class="rung-n">03</span>
+          <div class="rung rung--rots">
+            <span class="rung-n">01</span>
             <span>
-              <span class="rung-name">World-state removal</span>
-              <span class="rung-desc">Delete the affordance. The wrong action becomes impossible. The only rung that survives an actor who never read the rule.</span>
+              <span class="rung-name">Noun &mdash; a rule, a prompt line, a memory note</span>
+              <span class="rung-desc">Holds only while an actor reads it and chooses to comply. Rots first, and rots silently. Most &ldquo;we fixed that&rdquo; lives here.</span>
             </span>
           </div>
           <div class="rung rung--mid">
@@ -715,11 +728,11 @@
             </span>
             <span class="rung-note">2.5 &mdash; where most &ldquo;permanent&rdquo; fixes actually sit. If removing the affordance is itself an action someone must perform, a skipped step returns you silently to rung 1.</span>
           </div>
-          <div class="rung rung--rots">
-            <span class="rung-n">01</span>
+          <div class="rung rung--holds">
+            <span class="rung-n">03</span>
             <span>
-              <span class="rung-name">Noun &mdash; a rule, a prompt line, a memory note</span>
-              <span class="rung-desc">Holds only while an actor reads it and chooses to comply. Rots first, and rots silently. Most &ldquo;we fixed that&rdquo; lives here.</span>
+              <span class="rung-name">World-state removal</span>
+              <span class="rung-desc">Delete the affordance. The wrong action becomes impossible. The only rung that survives an actor who never read the rule.</span>
             </span>
           </div>
         </div>
@@ -747,14 +760,14 @@
           <p>Those 27 fixes shipped in a single day, and all 13 that decayed lived on one surface &mdash; so surface and mechanism-class are confounded and I cannot separate them from that sample. Of the 14 that held, only four to six have durability evidence long enough to count; the rest are untested. The one validation session was confounded by a model upgrade partway through. <strong>I hold the ladder as a hypothesis I have been testing since, not as a result</strong> &mdash; and I would rather tell you that than have you find it in the walkthrough.</p>
         </div>
 
-        <h4>The permanence test</h4>
+        <h3 class="micro">The permanence test</h3>
         <p>Does the fix still hold for an actor who never read it? A fresh context inherits the codebase's <em>behaviour</em> and never an instruction's <em>force</em>. Any fix enforced by &ldquo;the actor reads X and chooses to comply&rdquo; is a noun with extra steps, and it will rot the first session the actor is under time pressure or has not loaded X.</p>
 
-        <h4>The top rung is conditional</h4>
+        <h3 class="micro">The top rung is conditional</h3>
         <p>I learned that by being wrong about it. I removed an affordance &mdash; a browser tab that could be disturbed mid-job &mdash; and called that class of bug impossible. It recurred: the removal was itself an action someone had to perform, and on a path nobody had walked it never ran. So the test is stricter: is the affordance never created, or is its removal a verb that fires whichever path the actor took? A removal-by-action is rung 2.5, and it fails exactly where you never walked.</p>
 
-        <h4>Three findings underneath it</h4>
-        <p><strong>A verb guards an action; a rule names a behaviour.</strong> &ldquo;Don't disturb a running job&rdquo; has three action-faces &mdash; kill it, touch it, over-poll it. I guarded the kill face, marked the behaviour fixed, and the touch face failed weeks later. Enumerate every face, or write down which remain unguarded.</p>
+        <h3 class="micro">Three findings underneath it</h3>
+        <p><strong>A verb guards an action; a rule names a behaviour.</strong> &ldquo;Don't disturb a running job&rdquo; has at least three action-faces &mdash; kill it, touch it, over-poll it. I guarded the kill face, marked the behaviour fixed, and the touch face failed weeks later. Enumerate every face and guard each, or write down which remain unguarded.</p>
         <p><strong>Recognition needs a chokepoint too.</strong> At the moment of recurrence the lookup <em>have I seen this exact thing before?</em> never fires. I had six dated recurrences of one bug on record and read none while diagnosing the seventh.</p>
         <p><strong>Delegate the work, never the clock.</strong> Nothing self-re-animates a dormant agent &mdash; an inline sleep returned early, a background child never woke its parent. The durable form of &ldquo;continue this later&rdquo; is the foreground re-invoked by a harness event.</p>
       </section>
@@ -783,7 +796,7 @@
 
         <p>That last row is the one I would carry into any system with an agent or a person in the loop. <strong>A partial block does not stop the behaviour; it moves it into the channel you cannot see.</strong> Covering most of the surface does not buy most of the protection &mdash; it buys the same behaviour, now invisible, and usually larger. Defend the resource, not the interface.</p>
 
-        <h4>What did hold</h4>
+        <h3 class="micro">What did hold</h3>
         <p>A layered posture, correctly labelled. <strong>Friction that announces itself</strong>: a re-entry path that takes ten minutes and cannot be done quietly. <strong>A single instrumented channel</strong>, so every action lands on one recorded surface and diagnosis afterwards is possible at all. And <strong>ground-truth measurement</strong>: judge by the external system's own state, never by your log, because the path you care about leaves no rows in it.</p>
 
         <div class="panel">
@@ -800,11 +813,11 @@
         <p>Everything above is about making behaviour hold. This is about whether the evidence you decided on was real, and it comes from the research platform.</p>
         <p>Its flagship candidate came back at <strong>Sharpe 13.76, probability of overfitting 0.0%, deflated Sharpe 1.0000</strong>. Every standard referee passed it. It did not survive contact with live execution. The search was not broken: it was optimizing against a simulator with a defect, and the overfitting statistics were computed inside that same defective simulator. Re-run on an honest execution model over the identical 89 sessions, the same candidate inverts to <strong>Sharpe &minus;1.69</strong>. The backtest had been faithfully describing an engine that did not exist.</p>
 
-        <h4>Three laws, each with a price attached</h4>
+        <h3 class="micro">Three laws, each with a price attached</h3>
         <ul>
           <li><strong>An optimizer converges on your evaluator's defects, not your objective.</strong> Goodhart is the default output of any search loop given enough iterations, and it is the modal outcome rather than an edge case.</li>
-          <li><strong>Standard referees check the return side and cannot see a violation on the signal side.</strong> A separate screen passed bootstrap, placebo, a comparator and all 13 trigger years at +150.9bp. With one look-ahead field removed it went to &minus;9.2bp, indistinguishable from doing nothing. Only an information-set audit catches that class.</li>
-          <li><strong>A green test suite certifies capability presence, not operational effect.</strong> 1,571 passing tests covered 16 self-improvement mechanisms. In a real multi-hour run, <strong>two of them fired</strong>. The rest were wired, enabled, tested and inert, most killed by a single silently-empty collection at an adapter boundary.</li>
+          <li><strong>Standard referees check the return side and cannot see a violation on the signal side.</strong> A separate screen passed bootstrap, placebo, a comparator and all 13 trigger years at +150.9bp. With one look-ahead field removed it went to &minus;9.2bp, no longer distinguishable from zero at that sample. Only an information-set audit catches that class.</li>
+          <li><strong>A green test suite certifies capability presence, not operational effect.</strong> 1,571 passing tests across the two engines covered 16 self-improvement mechanisms. In a real multi-hour run, <strong>two of them fired</strong>. The rest were wired, enabled, tested and inert, most killed by a single silently-empty collection at an adapter boundary.</li>
         </ul>
 
         <p>What worked was inverting the order: <strong>validate the validator against a known null before trusting any positive.</strong> Synthetic driftless data, the full gate stack, roughly 66,000 trades, zero survivors out of thirty. On data with no edge the evaluator manufactured none &mdash; recorded with its own bound, since 0/30 constrains the false-positive rate to about 10% and no better.</p>
@@ -825,11 +838,11 @@
         </div>
 
         <p>That run read 0.496 against a 0.500 chance line, and the honest statement of it is precise rather than dramatic: <strong>at that sample size no effect was detectable</strong> &mdash; a different claim from &ldquo;there is none&rdquo;, with the interval saying how large an effect would still have been missed.</p>
-        <p>Which is what it was for. It produced the first result capable of redirecting the work rather than decorating it, and did: selection moved out of the live loop into an offline pipeline where a rule is pre-registered, run once and killed cheaply. That pipeline is the current work.</p>
+        <p>Which is what it was for. It produced the first result capable of redirecting the work rather than decorating it, and it did: selection moved out of the live loop into an offline pipeline where a rule is pre-registered, run once and killed cheaply. That pipeline is the current work.</p>
 
-        <h4>Then the new instrument tried to fool me, twice, in one evening</h4>
+        <h3 class="micro">Then the new instrument tried to fool me, twice, in one evening</h3>
         <p>First real use: three mechanical rules, frozen in a commit before anything ran. One came back at <strong>0.725, its confidence interval clear of chance</strong> &mdash; a survivor on the first attempt, exactly the result I wanted.</p>
-        <p>One question killed it. <em>Is this measuring the moment the rule chose, or where in the local price range it happened to enter?</em> Under a fixed stop with no target, an entry below its neighbours has a shorter stop and a longer run to the close &mdash; it wins arithmetically whether or not it predicted anything.</p>
+        <p>One question killed it. <em>Is this measuring the moment the rule chose, or where in the local price range it happened to enter?</em> Under a fixed stop distance with no profit target, an entry below its neighbours has a longer run to the close &mdash; it wins arithmetically whether or not it predicted anything.</p>
 
         <div class="scroll">
           <table>
@@ -837,9 +850,9 @@
               <tr><th>Rule</th><th>Score vs time-matched control</th><th>Its entry-price position</th><th>Vs price-matched control</th></tr>
             </thead>
             <tbody>
-              <tr><td>Breakout</td><td class="num">0.388</td><td class="num">0.361</td><td class="num v-holds">0.484</td></tr>
-              <tr><td>Fade</td><td class="num">0.580</td><td class="num">0.590</td><td class="num v-holds">0.553</td></tr>
-              <tr><td>Reversion</td><td class="num">0.725</td><td class="num">0.857</td><td class="num v-holds">0.618</td></tr>
+              <tr><td>Breakout</td><td class="num">0.388</td><td class="num">0.361</td><td class="num">0.484</td></tr>
+              <tr><td>Fade</td><td class="num">0.580</td><td class="num">0.590</td><td class="num">0.553</td></tr>
+              <tr><td>Reversion</td><td class="num">0.725</td><td class="num">0.857</td><td class="num">0.618</td></tr>
             </tbody>
           </table>
         </div>
@@ -856,7 +869,7 @@
         <p>The agent designs and implements its own tooling, which removes the natural over-build alarm, so the constraints have to be structural.</p>
 
         <ul>
-          <li><strong>A budget on what may refuse, audited at every session close.</strong> It started as a single cap of eight blockers, net-zero: add one, retire one. Measurement killed that rule &mdash; it priced a capital circuit-breaker and a ceremony check as interchangeable, so you could retire a real safety fuse to make room for a process gate and the gauge would print &ldquo;net-zero&nbsp;✓&rdquo;. It was replaced by budgeting the two classes separately: process friction capped at zero, safety breakers governed by earn-your-place review instead of by a count. <strong>The cap was the intuitive design and it was wrong in a way only the audit could show.</strong></li>
+          <li><strong>A budget on what may refuse, re-counted at session start.</strong> It began as a cap of eight surfaces, net-zero: add one, retire one. Two things went wrong in a single evening. Re-running the registry's own enumeration showed the count was stale rather than breached &mdash; at least eleven surfaces could already refuse a live order and four had never been booked, so every earlier &ldquo;within budget&rdquo; verdict had been computed against a false baseline. Then I replaced the cap with a two-class scheme I was confident about, and the external seat returned TERMINAL on it the same night: the example motivating my change was forbidden by three artifacts that already existed and was arithmetically impossible, and what the change actually did was let a caller exempt itself by declaring its own class. The cap was restored, and the ceiling reset only after the full enumeration was put in front of the person whose money it protects. <strong>My redesign was the thing that was wrong, and the outside seat is what caught it.</strong> The count itself warns rather than blocks &mdash; by the ladder above that makes it a noun, and it is owed a verb.</li>
           <li><strong>Tiered change authority.</strong> Reversible fixes ship autonomously, parameter tunes ship but are logged, and any new mechanism requires an explicit proposal. What a change touches sets its tier, not how the agent narrates it: &ldquo;it's only a knob&rdquo; is not a downgrade.</li>
           <li><strong>External, non-self-graded refutation.</strong> Any significant design is attacked by a fresh context given the proposal and the project's known anti-patterns and told to break it, with the verdict pasted in verbatim. Its disclosed limitation is written into the seat itself: the brief it receives was written by the author, so it is told not to accept that framing as fact. The first change made under this charter was found redundant and built on a false premise, and reverted to zero net code.</li>
           <li><strong>Ship the gauge with the mechanism.</strong> Every mechanism carries an outcome-based success criterion, and an audit fails the build if a decision record declares a gate without shipping its measurement. &ldquo;The gauge fired&rdquo; is not evidence.</li>
@@ -870,19 +883,19 @@
         <span class="label">Working together</span>
         <h2>How I work</h2>
 
-        <h4>Written-first</h4>
+        <h3 class="micro">Written-first</h3>
         <p>You get decisions in a form you can re-read three weeks later instead of a meeting you have to remember &mdash; the record is part of what I deliver, and it is the same discipline the systems above run on. Calls when a decision needs one. I am on CET, overlapping European hours and US mornings.</p>
 
-        <h4>Built to be handed over</h4>
+        <h3 class="micro">Built to be handed over</h3>
         <p>Every system here was built to be picked up cold by someone who was not there. That constraint is why the operating contract is injected rather than remembered, and why the Unity project prints its own next task with the traps and the done-condition attached and refuses to close it without evidence. If your team has stopped trusting what the agent reports, that handover surface is what I would build first.</p>
 
-        <h4>Why I take this work, and the time I have for it</h4>
-        <p>The heavy build on my own systems is behind me. They are automated and do not need me sitting in front of them &mdash; which was the point &mdash; so the time is real rather than squeezed in around something else.</p>
+        <h3 class="micro">Why I take this work, and the time I have for it</h3>
+        <p>The heavy build on my own systems is behind me, and the live loop is stopped by a stopping rule I signed in advance. What remains runs without me sitting in front of it, which was the point of building it that way, so the time is real rather than squeezed in around something else.</p>
         <p>What contract work gives me is the part I cannot build alone: other people's architectures, other people's constraints, and failure modes I have not met yet. This field moves fast enough that working across it is how the transferable part stays transferable. And I like the work, which is worth saying plainly when you are deciding who to spend six weeks with.</p>
         <p>The engagements that go well have a hard, specific problem in them &mdash; a system misbehaving in production, or one about to be built while the tool surface, the refusal points and the measurement can still be decided early. That is the part I am good at and the part I enjoy, and it is worth pointing at before we start.</p>
 
-        <h4>On what stays private</h4>
-        <p>None of the systems here are published &mdash; no repository, no code, no proprietary logic. That is a policy rather than a gap, and it is the same policy your work would sit under. Instead I walk you through any part of it live, and keep the first piece small enough that you are judging the work.</p>
+        <h3 class="micro">On what stays private</h3>
+        <p>Apart from the game, none of the systems here are published &mdash; no repository, no code, no proprietary logic. That is a policy rather than a gap, and it is the same policy your work would sit under. Instead I walk you through any part of it live, and keep the first piece small enough that you are judging the work.</p>
 
       </section>
 
