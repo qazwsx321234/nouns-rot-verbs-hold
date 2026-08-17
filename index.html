@@ -111,7 +111,7 @@
 
   .masthead { padding: 4rem 0 0; }
 
-  .masthead .label { margin: 0 0 2rem; display: block; }
+  .masthead > .label { margin: 0 0 2rem; display: block; }
 
   h1 {
     font-family: var(--display);
@@ -430,8 +430,8 @@
   .panel p { font-size: var(--s-base); max-width: none; }
   .panel p:last-child { margin-bottom: 0; }
 
-  figure { margin: 1.75rem 0; }
-  figure svg { display: block; width: 100%; height: auto; min-width: 42rem; }
+  figure { margin: 1.75rem 0; overflow-x: auto; }
+  figure svg { display: block; width: 100%; height: auto; min-width: 40rem; }
   figcaption { font-family: var(--mono); font-size: var(--s-xs); line-height: 1.55; color: var(--muted); margin-top: .9rem; max-width: 40rem; }
 
   .dg-box { fill: var(--surface); stroke: var(--rule); stroke-width: 1.25; }
@@ -658,7 +658,7 @@
         <p>The shape below is the one I keep rebuilding, in trading and outside it. Two details carry most of the weight: state is read from ground truth on every pass rather than carried forward in the model's own summary, and the places where the system can refuse are explicit, few, and sit on the path itself rather than in the instructions.</p>
 
         <figure>
-          <svg viewBox="0 0 800 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="dg-title">
+          <svg viewBox="0 0 760 306" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="dg-title">
             <title id="dg-title">Architecture of an unattended agent loop: a ground-truth band feeding a five-stage loop with two chokepoints, writing to an append-only record that feeds the next session.</title>
 
             <defs>
@@ -671,62 +671,63 @@
             </defs>
 
             <!-- ground truth band -->
-            <rect class="dg-band" x="40" y="16" width="678" height="40"></rect>
-            <text class="dg-t" x="56" y="34">GROUND TRUTH</text>
-            <text class="dg-s" x="56" y="49">live tape &middot; broker positions &middot; account state &mdash; re-read every pass, never remembered</text>
+            <rect class="dg-band" x="0" y="8" width="760" height="42"></rect>
+            <text class="dg-t" x="16" y="27">GROUND TRUTH</text>
+            <text class="dg-s" x="16" y="42">live tape &middot; broker positions &middot; account state &mdash; re-read every pass, never remembered</text>
 
             <!-- feeds -->
-            <path class="dg-line" d="M99 56 L99 122" marker-end="url(#ah)"></path>
-            <path class="dg-line" d="M519 122 L519 56" marker-end="url(#ah)"></path>
+            <path class="dg-line" d="M62 50 L62 114" marker-end="url(#ah)"></path>
+            <path class="dg-line" d="M539 114 L539 50" marker-end="url(#ah)"></path>
 
             <!-- loop boxes -->
-            <rect class="dg-box" x="40"  y="126" width="118" height="46"></rect>
-            <text class="dg-t" x="99"  y="148" text-anchor="middle">READ</text>
-            <text class="dg-s" x="99"  y="163" text-anchor="middle">perceive</text>
+            <rect class="dg-box" x="0"   y="118" width="124" height="48"></rect>
+            <text class="dg-t" x="62"  y="141" text-anchor="middle">READ</text>
+            <text class="dg-s" x="62"  y="156" text-anchor="middle">perceive</text>
 
-            <rect class="dg-box" x="180" y="126" width="118" height="46"></rect>
-            <text class="dg-t" x="239" y="148" text-anchor="middle">DECIDE</text>
-            <text class="dg-s" x="239" y="163" text-anchor="middle">form a view</text>
+            <rect class="dg-box" x="159" y="118" width="124" height="48"></rect>
+            <text class="dg-t" x="221" y="141" text-anchor="middle">DECIDE</text>
+            <text class="dg-s" x="221" y="156" text-anchor="middle">form a view</text>
 
-            <rect class="dg-box" x="320" y="126" width="118" height="46"></rect>
-            <text class="dg-t" x="379" y="148" text-anchor="middle">ARM</text>
-            <text class="dg-s" x="379" y="163" text-anchor="middle">conditional plan</text>
+            <rect class="dg-box" x="318" y="118" width="124" height="48"></rect>
+            <text class="dg-t" x="380" y="141" text-anchor="middle">ARM</text>
+            <text class="dg-s" x="380" y="156" text-anchor="middle">conditional plan</text>
 
-            <rect class="dg-box" x="460" y="126" width="118" height="46"></rect>
-            <text class="dg-t" x="519" y="148" text-anchor="middle">EXECUTE</text>
-            <text class="dg-s" x="519" y="163" text-anchor="middle">MCP &rarr; broker</text>
+            <rect class="dg-box" x="477" y="118" width="124" height="48"></rect>
+            <text class="dg-t" x="539" y="141" text-anchor="middle">EXECUTE</text>
+            <text class="dg-s" x="539" y="156" text-anchor="middle">MCP &rarr; broker</text>
 
-            <rect class="dg-box" x="600" y="126" width="118" height="46"></rect>
-            <text class="dg-t" x="659" y="148" text-anchor="middle">MEASURE</text>
-            <text class="dg-s" x="659" y="163" text-anchor="middle">score the call</text>
+            <rect class="dg-box" x="636" y="118" width="124" height="48"></rect>
+            <text class="dg-t" x="698" y="141" text-anchor="middle">MEASURE</text>
+            <text class="dg-s" x="698" y="156" text-anchor="middle">score the call</text>
 
             <!-- edges -->
-            <path class="dg-line" d="M158 149 L176 149" marker-end="url(#ah)"></path>
-            <path class="dg-line" d="M298 149 L316 149" marker-end="url(#ah)"></path>
-            <path class="dg-line" d="M438 149 L456 149" marker-end="url(#ah)"></path>
-            <path class="dg-line" d="M578 149 L596 149" marker-end="url(#ah)"></path>
+            <path class="dg-line" d="M124 142 L155 142" marker-end="url(#ah)"></path>
+            <path class="dg-line" d="M283 142 L314 142" marker-end="url(#ah)"></path>
+            <path class="dg-line" d="M442 142 L473 142" marker-end="url(#ah)"></path>
+            <path class="dg-line" d="M601 142 L632 142" marker-end="url(#ah)"></path>
 
-            <!-- chokepoints -->
-            <line class="dg-gate" x1="307" y1="134" x2="307" y2="164"></line>
-            <line class="dg-gate" x1="447" y1="134" x2="447" y2="164"></line>
-            <text class="dg-g" x="307" y="192" text-anchor="middle">capital gate</text>
-            <text class="dg-s" x="307" y="206" text-anchor="middle">&le;8 rules may ever refuse</text>
-            <text class="dg-g" x="447" y="192" text-anchor="middle">pre-flight</text>
-            <text class="dg-s" x="447" y="206" text-anchor="middle">arithmetic, not advice</text>
+            <!-- chokepoints: the only two places that may refuse -->
+            <line class="dg-gate" x1="300" y1="108" x2="300" y2="176"></line>
+            <line class="dg-gate" x1="459" y1="108" x2="459" y2="176"></line>
+            <text class="dg-g" x="300" y="195" text-anchor="middle">capital gate</text>
+            <text class="dg-s" x="300" y="209" text-anchor="middle">&le; 8 rules, ever</text>
+            <text class="dg-g" x="459" y="195" text-anchor="middle">pre-flight</text>
+            <text class="dg-s" x="459" y="209" text-anchor="middle">arithmetic, not advice</text>
 
             <!-- turn-end hook -->
-            <rect class="dg-box" x="600" y="196" width="118" height="30"></rect>
-            <text class="dg-s" x="659" y="215" text-anchor="middle">turn-end hook: blocks</text>
-            <path class="dg-line" d="M659 172 L659 192" marker-end="url(#ah)"></path>
+            <rect class="dg-box" x="636" y="188" width="124" height="38"></rect>
+            <text class="dg-s" x="698" y="204" text-anchor="middle">turn-end hook</text>
+            <text class="dg-s" x="698" y="218" text-anchor="middle">refuses to finish</text>
+            <path class="dg-line" d="M698 166 L698 184" marker-end="url(#ah)"></path>
 
             <!-- record band -->
-            <rect class="dg-band" x="40" y="262" width="678" height="44"></rect>
-            <text class="dg-t" x="56" y="281">APPEND-ONLY RECORD</text>
-            <text class="dg-s" x="56" y="296">decisions &middot; verdicts &middot; retractions &mdash; the only surface a claim is allowed to live on</text>
+            <rect class="dg-band" x="0" y="252" width="760" height="44"></rect>
+            <text class="dg-t" x="16" y="271">APPEND-ONLY RECORD</text>
+            <text class="dg-s" x="16" y="286">decisions &middot; verdicts &middot; retractions &mdash; the only surface a claim is allowed to live on</text>
 
-            <path class="dg-line" d="M659 226 L659 258" marker-end="url(#ah)"></path>
-            <path class="dg-dash" d="M239 262 L239 176" marker-end="url(#ahd)"></path>
-            <text class="dg-s" x="248" y="248">what the last session learned</text>
+            <path class="dg-line" d="M698 226 L698 248" marker-end="url(#ah)"></path>
+            <path class="dg-dash" d="M221 252 L221 170" marker-end="url(#ahd)"></path>
+            <text class="dg-s" x="231" y="240">what the last session learned</text>
           </svg>
           <figcaption>The two vertical marks are the only places in the loop that may refuse. Everything else advises. Keeping that number small is a design constraint, enforced by an audit that fails the build rather than by intention.</figcaption>
         </figure>
