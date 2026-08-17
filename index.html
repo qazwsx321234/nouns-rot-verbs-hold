@@ -443,7 +443,7 @@
 
     <div class="actions">
       <a class="btn btn--lead" href="mailto:qazwsx321234@gmail.com?subject=Agent%20engineering%20%E2%80%94%20enquiry">Email me</a>
-      <a class="btn" href="#first">How I'd start</a>
+      <a class="btn" href="#problems">What I've had to solve</a>
       <a class="btn" href="#work">Selected work</a>
     </div>
   </header>
@@ -453,7 +453,7 @@
     <nav class="index" aria-label="Contents">
       <span class="label">Contents</span>
       <a href="#deep">Where I've gone deep</a>
-      <a href="#first">How I'd start</a>
+      <a href="#problems">What I've had to solve</a>
       <a href="#work">Selected work</a>
       <a href="#architecture">How it fits together</a>
       <a href="#ladder">The durability ladder</a>
@@ -496,24 +496,21 @@
         <p>That is expertise, not a menu. I like problems I have not met before, and the methods travel &mdash; it is the same problem in a support workflow, a data pipeline or a build system as it is in a trading loop. If it is something I have not built yet, that is a reason I want it.</p>
       </section>
 
-      <!-- ═══════════ first ═══════════ -->
-      <section id="first">
-        <span class="label">Method</span>
-        <h2>How I'd start</h2>
-        <p>What the work turns out to be depends on your system, and I would not pretend to know before reading it. What does not change is where I look first. These are the questions I have had to answer on everything I have built, and they are usually where the trouble is hiding:</p>
+      <!-- ═══════════ problems ═══════════ -->
+      <section id="problems">
+        <span class="label">The transferable part</span>
+        <h2>What I've had to solve</h2>
+        <p>Four problems came up on my own systems that cost enough to be worth writing down. Each is worked out in full further down; this is what they were.</p>
 
         <div class="offer">
-          <span class="label">The first questions</span>
-          <ol>
-            <li>Where each guard actually lives &mdash; a line in a prompt, a refusal at the chokepoint, or an affordance that was removed. Most sit a rung lower than their author believes.</li>
-            <li>Which obligations are written in a document rather than wired into the runtime, and which chokepoint each one belongs at.</li>
-            <li>Whether any delegation boundary is losing work silently. That one looks like a model-quality problem and is not.</li>
-            <li>Whether &ldquo;done&rdquo; is derived from ground truth, or reported by the thing that did it.</li>
-            <li>Whether the evaluation measures what you think it measures, or something merely correlated with it.</li>
-          </ol>
+          <span class="label">Four problems, and where each is worked out</span>
+          <p><strong>A fix everyone believed was permanent, and wasn't.</strong> I shipped 27 fixes and tracked which survived. Roughly half decayed &mdash; and the ones that held were not the well-written ones, they were the ones wired into a chokepoint. <a href="#ladder">The durability ladder &rarr;</a></p>
+          <p><strong>A guard that worked, and made things worse.</strong> Five mechanisms, each with a real ceiling. One fired exactly as designed and pushed the activity into the channel I could not see. <a href="#enforcement">Guards and their ceilings &rarr;</a></p>
+          <p><strong>A result that passed every test and was false.</strong> Sharpe 13.76, probability of overfitting 0.0%. The referees were computing their verdict inside the same defective simulator the search was exploiting. <a href="#evaluator">When the evaluator lies &rarr;</a></p>
+          <p><strong>A measurement I trusted that was measuring something else.</strong> I built a control group, got a clean survivor on the first attempt, and killed it the same evening with one question about what the control had been matched on. <a href="#control">Building the control group &rarr;</a></p>
         </div>
 
-        <p>Scope comes out of that conversation instead of out of a template. I would rather agree a first piece small enough for you to judge the work than quote a plan for a system I have not seen. And if the system does not exist yet, the same questions run forwards: deciding the tool surface, the refusal points and the measurement before the loop is built is far cheaper than retrofitting all three.</p>
+        <p>None of these are trading problems. They are what happens to any system that has to keep working when nobody is checking, and they are the reason I would rather be handed a system that is already misbehaving than a blank page.</p>
       </section>
 
       <!-- ═══════════ work ═══════════ -->
@@ -885,6 +882,9 @@
 
         <h3 class="micro">Written-first</h3>
         <p>You get decisions in a form you can re-read three weeks later instead of a meeting you have to remember &mdash; the record is part of what I deliver, and it is the same discipline the systems above run on. Calls when a decision needs one. I am on CET, overlapping European hours and US mornings.</p>
+
+        <h3 class="micro">What I look at first</h3>
+        <p>What the work turns out to be depends on your system and I would not pretend to know before reading it, but the opening questions are the same ones every time: where each guard actually lives, which obligations are written in a document rather than wired into the runtime, whether any delegation boundary is losing work silently, whether &ldquo;done&rdquo; is derived from ground truth or reported by the thing that did it, and whether the evaluation measures what you think it measures. Scope comes out of that conversation instead of out of a template.</p>
 
         <h3 class="micro">Built to be handed over</h3>
         <p>Every system here was built to be picked up cold by someone who was not there. That constraint is why the operating contract is injected rather than remembered, and why the Unity project prints its own next task with the traps and the done-condition attached and refuses to close it without evidence. If your team has stopped trusting what the agent reports, that handover surface is what I would build first.</p>
