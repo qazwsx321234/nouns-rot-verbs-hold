@@ -424,13 +424,13 @@
       </div>
       <div class="fact">
         <dt class="label">Time</dt>
-        <dd>~20 hrs/week or a fixed-scope piece &middot; starting now</dd>
+        <dd>From $80/hr &middot; ~20 hrs a week, or a fixed-scope piece &middot; starting now</dd>
       </div>
     </dl>
 
     <div class="actions">
       <a class="btn btn--lead" href="mailto:qazwsx321234@gmail.com?subject=Agent%20engineering%20%E2%80%94%20enquiry">Email me</a>
-      <a class="btn" href="#first">What I'd do first</a>
+      <a class="btn" href="#first">How I'd start</a>
       <a class="btn" href="#work">Selected work</a>
     </div>
   </header>
@@ -440,7 +440,7 @@
     <nav class="index" aria-label="Contents">
       <span class="label">Contents</span>
       <a href="#deep">Where I've gone deep</a>
-      <a href="#first">What I'd do first</a>
+      <a href="#first">How I'd start</a>
       <a href="#work">Selected work</a>
       <a href="#architecture">How it fits together</a>
       <a href="#ladder">The durability ladder</a>
@@ -457,7 +457,7 @@
       <section id="deep">
         <span class="label">Expertise</span>
         <h2>Where I've gone deep</h2>
-        <p>I build systems end to end. Every system on this page I designed and built myself, from an empty directory to something that runs on its own.</p>
+        <p>I build systems end to end. Every system on this page I designed and built myself, from an empty directory to something that works.</p>
         <p>The part I have gone furthest on is what decides whether one survives contact with real use. An agent that behaves well under supervision tells you very little about how it behaves at 3am in week eleven, and that gap is where I have spent this year.</p>
 
         <div class="caps">
@@ -485,23 +485,22 @@
 
       <!-- ═══════════ first ═══════════ -->
       <section id="first">
-        <span class="label">The first engagement</span>
-        <h2>What I'd do in the first two weeks</h2>
-        <p>Fixed price, fixed scope, small enough that you are judging the work rather than this page &mdash; a 30&ndash;40 hour first piece, quoted from an $80/hr basis so you can check the arithmetic. On an agent that already exists, the opening deliverable is an audit that reordered the roadmap on mine:</p>
+        <span class="label">Method</span>
+        <h2>How I'd start</h2>
+        <p>What the work turns out to be depends on your system, and I would not pretend to know before reading it. What does not change is where I look first. These are the questions I have had to answer on everything I have built, and they are usually where the trouble is hiding:</p>
 
         <div class="offer">
-          <span class="label">Deliverable</span>
+          <span class="label">The first questions</span>
           <ol>
-            <li>Every guard in your system classified by how durably it is enforced &mdash; a prompt instruction, a runtime refusal, or a removed affordance &mdash; because every system I have audited had these mis-rated.</li>
-            <li>Every obligation that currently lives in a prompt or a doc instead of in the runtime, listed, with the chokepoint each one should move to.</li>
-            <li>Each delegation boundary checked for silent work loss, which is the failure that looks like a model quality problem and is not.</li>
-            <li>A reproduction of your worst reported-done-but-not-done failure, and the check that would have caught it.</li>
-            <li>Wherever your evaluation is measuring something other than what you think, with the specific confound named.</li>
+            <li>Where each guard actually lives &mdash; a line in a prompt, a refusal at the chokepoint, or an affordance that was removed. Most sit a rung lower than their author believes.</li>
+            <li>Which obligations are written in a document rather than wired into the runtime, and which chokepoint each one belongs at.</li>
+            <li>Whether any delegation boundary is losing work silently. That one looks like a model-quality problem and is not.</li>
+            <li>Whether &ldquo;done&rdquo; is derived from ground truth, or reported by the thing that did it.</li>
+            <li>Whether the evaluation measures what you think it measures, or something merely correlated with it.</li>
           </ol>
-          <p>You keep the audit whether or not we work together after it.</p>
         </div>
 
-        <p>If the system does not exist yet, the same engagement runs forwards instead: the tool surface, the refusal points and the measurement designed before the loop is built, which is far cheaper than retrofitting all three.</p>
+        <p>Scope comes out of that conversation instead of out of a template. I would rather agree a first piece small enough for you to judge the work than quote a plan for a system I have not seen. And if the system does not exist yet, the same questions run forwards: deciding the tool surface, the refusal points and the measurement before the loop is built is far cheaper than retrofitting all three.</p>
       </section>
 
       <!-- ═══════════ work ═══════════ -->
@@ -560,7 +559,7 @@
           <p>A strategy-discovery factory running hundreds of search cycles over years of tick data, on top of an execution simulator built to be honest about fills, latency and cost, with a live execution tail deployed to a Chicago VPS. Four months, and the most useful thing it produced was a method.</p>
           <div class="took">
             <span class="label">What it took</span>
-            <p>Distributed Python pipelines and a full validation stack: combinatorially symmetric cross-validation, probability of overfitting, walk-forward, bootstrap and placebo comparators. Its main suite still runs clean &mdash; I re-ran it this week and 1,041 tests passed, on code I stopped developing in June and on a newer Python than it was written for.</p>
+            <p>Distributed Python pipelines and a full validation stack: combinatorially symmetric cross-validation, probability of overfitting, walk-forward, bootstrap and placebo comparators. Its main suite still runs clean &mdash; I re-ran it in August 2026 and 1,041 tests passed, on code I stopped developing in June and on a newer Python than it was written for.</p>
             <p>The decisive contribution was learning to distrust the referee rather than the result, which is the finding written up further down. The programme was then closed against a stopping rule frozen by hash before any real data was fit, reviewed by four independent adversarial passes, and its infrastructure torn down to zero cost the same day. Closing something on a rule written before you knew the answer is a skill, and it is why the next system starts with pre-registration built in.</p>
           </div>
           <div class="figures">
@@ -596,7 +595,7 @@
             <span class="label">Aug 2026 &middot; sole developer</span>
           </div>
           <h3>Mole&nbsp;Deep &mdash; a mobile-first survival game in one HTML file</h3>
-          <p><strong><a href="https://qazwsx321234.github.io/mole-deep/" target="_blank" rel="noopener">Play it &mdash; it opens on your phone, nothing to install.</a></strong> A dig-and-build survival game that runs from a single self-contained file: no build step, no dependencies, no server, nothing to install. Three verbs and one contextual action, on the constraint that a player holding a phone should never open a menu to find out what the button does right now.</p>
+          <p><strong><a href="https://qazwsx321234.github.io/mole-deep/" target="_blank" rel="noopener">Play it &mdash; it opens on your phone, nothing to install.</a></strong> A dig-and-build survival game that runs from a single self-contained file: no build step, no dependencies, no server. Three verbs and one contextual action, on the constraint that a player holding a phone should never open a menu to find out what the button does right now.</p>
           <div class="took">
             <span class="label">What it took</span>
             <p>A canvas render loop and touch controls that survive a thumb, a simulation with hunger, thirst, temperature and hostile AI, and a design where storing your materials happens by walking into the room rather than by pressing anything. Built with a different model family than the rest of the work here, on purpose: the transferable skill is directing the agent well, and it should not depend on one vendor's API.</p>
@@ -749,7 +748,7 @@
         </div>
 
         <h4>The permanence test</h4>
-        <p>Does the fix still hold for an actor who never read it? A fresh context inherits the codebase's <em>behaviour</em> and never an instruction's <em>force</em>. Any fix enforced by &ldquo;the actor reads X and chooses to comply&rdquo; is a noun with extra steps,.</p>
+        <p>Does the fix still hold for an actor who never read it? A fresh context inherits the codebase's <em>behaviour</em> and never an instruction's <em>force</em>. Any fix enforced by &ldquo;the actor reads X and chooses to comply&rdquo; is a noun with extra steps, and it will rot the first session the actor is under time pressure or has not loaded X.</p>
 
         <h4>The top rung is conditional</h4>
         <p>I learned that by being wrong about it. I removed an affordance &mdash; a browser tab that could be disturbed mid-job &mdash; and called that class of bug impossible. It recurred: the removal was itself an action someone had to perform, and on a path nobody had walked it never ran. So the test is stricter: is the affordance never created, or is its removal a verb that fires whichever path the actor took? A removal-by-action is rung 2.5, and it fails exactly where you never walked.</p>
@@ -788,9 +787,9 @@
         <p>A layered posture, correctly labelled. <strong>Friction that announces itself</strong>: a re-entry path that takes ten minutes and cannot be done quietly. <strong>A single instrumented channel</strong>, so every action lands on one recorded surface and diagnosis afterwards is possible at all. And <strong>ground-truth measurement</strong>: judge by the external system's own state, never by your log, because the path you care about leaves no rows in it.</p>
 
         <div class="panel">
-          <span class="label">Cut by our own data &mdash; and one of them later ruled back in</span>
+          <span class="label">Cut by my own data &mdash; and one of them later ruled back in</span>
           <p>Loss-streak locks, post-loss cooldowns and a proportional give-back ratchet all sounded right. Replayed against real recorded sessions, each fired repeatedly on healthy days, and the ratchet's original simulation turned out to contain <strong>look-ahead bias</strong>: it computed its floor from the day's final high, and replaying it honestly tripped the very day used to justify it. All three were cut, and what shipped instead came out of the replay: a flat threshold, a rapid-reversal fuse and a size sentinel.</p>
-          <p>The loss-streak lock was later ruled back in by the operator for a different channel at a fraction of the size &mdash; and the record says explicitly that the original falsification was <em>scoped out</em>, not overturned. That distinction is the point. A killed mechanism that returns under new conditions needs its old evidence carried forward with it, or the second decision quietly pretends the first never happened.</p>
+          <p>The loss-streak lock was later ruled back in for a different channel at a fraction of the size &mdash; and the record says explicitly that the original falsification was <em>scoped out</em>, not overturned. That distinction is the point. A killed mechanism that returns under new conditions needs its old evidence carried forward with it, or the second decision quietly pretends the first never happened.</p>
         </div>
       </section>
 
@@ -815,7 +814,7 @@
       <!-- ═══════════ control ═══════════ -->
       <section id="control">
         <span class="label">Controls</span>
-        <h2>Building the control group: scoring what the system rejected</h2>
+        <h2>Building the control group</h2>
         <p>Every gauge measured the calls the system took. Across 409 recorded decisions it had never once scored what it <em>rejected</em>, so the question underneath all the others had never been asked. The instrument: each real decision scored against random entries from the same day, same direction and same stop distance, differing only in which minute was chosen.</p>
 
         <div class="figures" style="max-width:42rem">
@@ -853,7 +852,7 @@
       <!-- ═══════════ governance ═══════════ -->
       <section id="governance">
         <span class="label">Governance</span>
-        <h2>Governance: letting an agent modify its own machinery without letting it ratchet</h2>
+        <h2>Letting an agent modify its own machinery without letting it ratchet</h2>
         <p>The agent designs and implements its own tooling, which removes the natural over-build alarm, so the constraints have to be structural.</p>
 
         <ul>
@@ -880,12 +879,11 @@
         <h4>Why I take this work, and the time I have for it</h4>
         <p>The heavy build on my own systems is behind me. They are automated and do not need me sitting in front of them &mdash; which was the point &mdash; so the time is real rather than squeezed in around something else.</p>
         <p>What contract work gives me is the part I cannot build alone: other people's architectures, other people's constraints, and failure modes I have not met yet. This field moves fast enough that working across it is how the transferable part stays transferable. And I like the work, which is worth saying plainly when you are deciding who to spend six weeks with.</p>
+        <p>The engagements that go well have a hard, specific problem in them &mdash; a system misbehaving in production, or one about to be built while the tool surface, the refusal points and the measurement can still be decided early. That is the part I am good at and the part I enjoy, and it is worth pointing at before we start.</p>
 
         <h4>On what stays private</h4>
         <p>None of the systems here are published &mdash; no repository, no code, no proprietary logic. That is a policy rather than a gap, and it is the same policy your work would sit under. Instead I walk you through any part of it live, and keep the first piece small enough that you are judging the work.</p>
 
-        <h4>What I would rather not be hired for</h4>
-        <p>Training or fine-tuning custom models, data labelling, and jobs where the real requirement is a full product built to a fixed spec by one person in a fortnight. I would rather say that now than discover it in week two.</p>
       </section>
 
       <!-- ═══════════ close ═══════════ -->
