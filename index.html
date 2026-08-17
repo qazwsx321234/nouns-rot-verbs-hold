@@ -3,215 +3,379 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Three months running an autonomous agent against a live, funded trading account. The fix-durability ladder, five defeated enforcement mechanisms, and the control group that came back at chance.">
+<meta name="description" content="Independent engineer building AI agents that run unattended, the MCP and tool layer underneath them, and the measurement that says honestly whether they work. Selected work, and a field report from running one against a live account.">
 <meta name="author" content="Agent systems engineering">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Nouns Rot. Verbs Hold.">
-<meta property="og:description" content="Three months running an autonomous agent against a live, funded trading account. The fix-durability ladder, five defeated enforcement mechanisms, and the control group that came back at chance.">
+<meta property="og:description" content="Independent engineer building AI agents that run unattended, the MCP and tool layer underneath them, and the measurement that says honestly whether they work. Selected work, and a field report from running one against a live account.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Nouns Rot. Verbs Hold.">
-<meta name="twitter:description" content="Three months running an autonomous agent against a live, funded trading account. The fix-durability ladder, five defeated enforcement mechanisms, and the control group that came back at chance.">
+<meta name="twitter:description" content="Independent engineer building AI agents that run unattended, the MCP and tool layer underneath them, and the measurement that says honestly whether they work. Selected work, and a field report from running one against a live account.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2226%22 font-size=%2226%22>&#9881;</text></svg>">
-<title>Nouns Rot. Verbs Hold. — Engineering an autonomous agent against live capital</title>
+<title>Nouns Rot. Verbs Hold.</title>
 
 <style>
   :root {
-    --ground:      #EEF0F2;
-    --surface:     #F7F8F9;
-    --surface-2:   #E4E7EA;
-    --ink:         #16191C;
-    --ink-soft:    #3A4249;
-    --muted:       #5C666E;
-    --rule:        #C9CFD4;
-    --rule-soft:   #DBE0E4;
-    --accent:      #A8681A;
-    --accent-soft: #F0E2CC;
-    --holds:       #2E6B66;
-    --holds-soft:  #D8E6E4;
+    --paper:      #E6E9EA;
+    --surface:    #F3F5F5;
+    --surface-2:  #D9DEDF;
+    --ink:        #12171A;
+    --ink-soft:   #333C41;
+    --muted:      #566165;
+    --rule:       #C3CACB;
+    --rule-soft:  #D5DBDC;
+    --holds:      #17564D;
+    --holds-bg:   #D7E4E1;
+    --rots:       #99381F;
+    --rots-bg:    #EFDFD9;
 
-    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
+    --display: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
+    --body: Charter, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
     --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-    --s-xs:  .75rem;
-    --s-sm:  .8125rem;
+    --s-xs:   .75rem;
+    --s-sm:   .8125rem;
     --s-base: .9375rem;
-    --s-md:  1.0625rem;
-    --s-lg:  1.3125rem;
-    --s-xl:  1.75rem;
-    --s-2xl: 2.5rem;
-    --s-3xl: 3.25rem;
+    --s-body: 1.0625rem;
+    --s-lg:   1.25rem;
+    --s-xl:   1.6875rem;
+    --s-2xl:  2.25rem;
+    --s-3xl:  3.5rem;
 
-    --measure: 34rem;
+    --measure: 36rem;
   }
 
   @media (prefers-color-scheme: dark) {
-    :root {
-      --ground:      #111417;
-      --surface:     #181C20;
-      --surface-2:   #212629;
-      --ink:         #E4E7EA;
-      --ink-soft:    #C2C9CE;
-      --muted:       #8B959D;
-      --rule:        #2E353A;
-      --rule-soft:   #242A2F;
-      --accent:      #E0A44B;
-      --accent-soft: #3A2E1C;
-      --holds:       #5FA9A2;
-      --holds-soft:  #1C2E2C;
+    :root:not([data-theme="light"]) {
+      --paper:     #0E1214;
+      --surface:   #161B1D;
+      --surface-2: #202628;
+      --ink:       #E2E7E8;
+      --ink-soft:  #BFC7C9;
+      --muted:     #8A9599;
+      --rule:      #2C3437;
+      --rule-soft: #212829;
+      --holds:     #63B5A6;
+      --holds-bg:  #16302C;
+      --rots:      #DF8663;
+      --rots-bg:   #33211A;
     }
   }
 
   :root[data-theme="dark"] {
-    --ground:      #111417;
-    --surface:     #181C20;
-    --surface-2:   #212629;
-    --ink:         #E4E7EA;
-    --ink-soft:    #C2C9CE;
-    --muted:       #8B959D;
-    --rule:        #2E353A;
-    --rule-soft:   #242A2F;
-    --accent:      #E0A44B;
-    --accent-soft: #3A2E1C;
-    --holds:       #5FA9A2;
-    --holds-soft:  #1C2E2C;
-  }
-
-  :root[data-theme="light"] {
-    --ground:      #EEF0F2;
-    --surface:     #F7F8F9;
-    --surface-2:   #E4E7EA;
-    --ink:         #16191C;
-    --ink-soft:    #3A4249;
-    --muted:       #5C666E;
-    --rule:        #C9CFD4;
-    --rule-soft:   #DBE0E4;
-    --accent:      #A8681A;
-    --accent-soft: #F0E2CC;
-    --holds:       #2E6B66;
-    --holds-soft:  #D8E6E4;
+    --paper:     #0E1214;
+    --surface:   #161B1D;
+    --surface-2: #202628;
+    --ink:       #E2E7E8;
+    --ink-soft:  #BFC7C9;
+    --muted:     #8A9599;
+    --rule:      #2C3437;
+    --rule-soft: #212829;
+    --holds:     #63B5A6;
+    --holds-bg:  #16302C;
+    --rots:      #DF8663;
+    --rots-bg:   #33211A;
   }
 
   * { box-sizing: border-box; }
 
   body {
-    background: var(--ground);
+    background: var(--paper);
     color: var(--ink);
-    font-family: var(--serif);
-    font-size: var(--s-md);
-    line-height: 1.62;
+    font-family: var(--body);
+    font-size: var(--s-body);
+    line-height: 1.6;
     margin: 0;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   .wrap {
-    max-width: 58rem;
+    max-width: 66rem;
     margin: 0 auto;
-    padding: 0 1.5rem 6rem;
+    padding: 0 1.5rem 5rem;
   }
 
-  /* ---------- masthead ---------- */
+  a { color: var(--ink); text-underline-offset: .18em; text-decoration-thickness: 1px; }
+  a:focus-visible { outline: 2px solid var(--holds); outline-offset: 3px; }
 
-  .masthead {
-    padding: 4.5rem 0 2.5rem;
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .eyebrow {
+  .label {
     font-family: var(--mono);
     font-size: var(--s-xs);
-    letter-spacing: .14em;
+    letter-spacing: .13em;
     text-transform: uppercase;
     color: var(--muted);
-    margin: 0 0 1.75rem;
   }
 
+  /* ══════════ masthead ══════════ */
+
+  .masthead { padding: 4rem 0 0; }
+
+  .masthead .label { margin: 0 0 2rem; display: block; }
+
   h1 {
+    font-family: var(--display);
     font-size: var(--s-3xl);
-    line-height: 1.04;
-    font-weight: 600;
-    letter-spacing: -.02em;
+    line-height: .98;
+    font-weight: 650;
+    letter-spacing: -.035em;
     text-wrap: balance;
-    margin: 0 0 1.25rem;
+    max-width: 18ch;
+    margin: 0 0 1.4rem;
   }
 
   .deck {
     font-size: var(--s-lg);
-    line-height: 1.5;
+    line-height: 1.45;
     color: var(--ink-soft);
-    max-width: 40rem;
+    max-width: 42rem;
     text-wrap: pretty;
     margin: 0;
   }
 
-  .byline {
+  .fade { animation: rise .55s cubic-bezier(.2,.7,.3,1) backwards; }
+  .fade-1 { animation-delay: .04s; }
+  .fade-2 { animation-delay: .12s; }
+  .fade-3 { animation-delay: .2s; }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(.6rem); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fade, .rung { animation: none !important; }
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin: 3rem 0 0;
+  }
+
+  .fact { background: var(--surface); padding: .95rem 1.05rem; }
+  .fact dt { margin: 0 0 .35rem; }
+  .fact dd {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: var(--s-sm);
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+
+  .actions { display: flex; flex-wrap: wrap; gap: .7rem; margin: 1.75rem 0 0; }
+
+  .btn {
+    font-family: var(--mono);
+    font-size: var(--s-sm);
+    letter-spacing: .03em;
+    text-decoration: none;
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: .65rem 1.05rem;
+  }
+
+  .btn:hover { border-color: var(--holds); color: var(--holds); }
+  .btn--lead { background: var(--holds-bg); border-color: var(--holds); color: var(--holds); }
+
+  /* ══════════ shell: sticky index + column ══════════ */
+
+  .shell { margin-top: 4.5rem; }
+
+  .index { display: none; }
+
+  .index a {
+    display: block;
+    font-family: var(--mono);
+    font-size: var(--s-xs);
+    letter-spacing: .04em;
+    line-height: 1.35;
+    color: var(--muted);
+    text-decoration: none;
+    padding: .42rem 0 .42rem .8rem;
+    border-left: 2px solid var(--rule-soft);
+  }
+
+  .index a:hover { color: var(--ink); }
+  .index a.is-current { color: var(--ink); border-left-color: var(--holds); }
+
+  @media (min-width: 62rem) {
+    .shell {
+      display: grid;
+      grid-template-columns: 12rem minmax(0, 1fr);
+      gap: 3.5rem;
+      align-items: start;
+    }
+    .index { display: block; position: sticky; top: 2.5rem; }
+    .index .label { display: block; margin: 0 0 .9rem .8rem; }
+  }
+
+  /* ══════════ sections ══════════ */
+
+  section { padding: 0 0 3.5rem; scroll-margin-top: 2rem; }
+  section + section { border-top: 1px solid var(--rule-soft); padding-top: 3.25rem; }
+
+  h2 {
+    font-family: var(--display);
+    font-size: var(--s-2xl);
+    line-height: 1.1;
+    font-weight: 650;
+    letter-spacing: -.028em;
+    text-wrap: balance;
+    max-width: 22ch;
+    margin: .35rem 0 1.2rem;
+  }
+
+  h3 {
+    font-family: var(--display);
+    font-size: var(--s-lg);
+    line-height: 1.25;
+    font-weight: 650;
+    letter-spacing: -.02em;
+    text-wrap: balance;
+    max-width: 34ch;
+    margin: 2.6rem 0 .7rem;
+  }
+
+  h4 {
+    font-family: var(--mono);
+    font-size: var(--s-xs);
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 2rem 0 .55rem;
+  }
+
+  p { margin: 0 0 1rem; max-width: var(--measure); text-wrap: pretty; }
+  section > p:last-child, .body > p:last-child { margin-bottom: 0; }
+
+  strong { font-weight: 600; }
+  em.t { font-style: normal; font-family: var(--mono); font-size: .9em; background: var(--surface-2); padding: .08em .34em; }
+
+  ul { margin: 0 0 1rem; padding-left: 1.05rem; max-width: var(--measure); }
+  li { margin-bottom: .55rem; }
+  li::marker { color: var(--muted); }
+
+  blockquote {
+    margin: 1.6rem 0;
+    padding: .1rem 0 .1rem 1.2rem;
+    border-left: 2px solid var(--holds);
+    max-width: 34rem;
+  }
+
+  blockquote p {
+    margin: 0;
+    font-family: var(--display);
+    font-size: var(--s-lg);
+    font-weight: 550;
+    letter-spacing: -.015em;
+    line-height: 1.35;
+  }
+
+  /* ══════════ capability grid ══════════ */
+
+  .caps { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1.75rem 2.25rem; margin-top: 1.75rem; }
+  .cap h4 { margin-top: 0; }
+  .cap p { font-size: var(--s-base); margin: 0; max-width: none; color: var(--ink-soft); }
+  .cap-name { font-family: var(--display); font-weight: 650; letter-spacing: -.015em; font-size: var(--s-body); display: block; margin: 0 0 .4rem; color: var(--ink); }
+
+  /* ══════════ work cards ══════════ */
+
+  .card {
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: 1.4rem 1.5rem 1.5rem;
+    margin: 0 0 1.1rem;
+  }
+
+  .card-top {
     display: flex;
     flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-top: 2.25rem;
+    align-items: baseline;
+    gap: .6rem 1.1rem;
+    margin: 0 0 .85rem;
+  }
+
+  .chip {
+    font-family: var(--mono);
+    font-size: var(--s-xs);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: .18rem .5rem;
+    border: 1px solid var(--rule);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .chip--live { color: var(--holds); border-color: var(--holds); background: var(--holds-bg); }
+
+  .card h3 { margin: 0 0 .7rem; font-size: var(--s-xl); max-width: 26ch; }
+  .card p { font-size: var(--s-base); max-width: 42rem; }
+  .card p:last-of-type { margin-bottom: 0; }
+
+  .took { margin-top: 1rem; }
+  .took > .label { display: block; margin-bottom: .45rem; }
+
+  .figures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin: 1.2rem 0 0;
+  }
+
+  .fig { background: var(--paper); padding: .7rem .85rem; }
+  .fig b {
+    display: block;
+    font-family: var(--mono);
+    font-size: var(--s-base);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.01em;
+  }
+  .fig span { display: block; font-family: var(--mono); font-size: var(--s-xs); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin-top: .15rem; }
+
+  .stack {
     font-family: var(--mono);
     font-size: var(--s-xs);
     letter-spacing: .04em;
     color: var(--muted);
+    margin: 1.1rem 0 0;
+    padding-top: .85rem;
+    border-top: 1px solid var(--rule-soft);
+    max-width: none;
   }
 
-  /* ---------- ladder hero ---------- */
+  /* ══════════ ladder ══════════ */
 
-  .ladder {
-    display: flex;
-    flex-direction: column-reverse;
-    gap: .5rem;
-    margin: 3rem 0 0;
-  }
+  .ladder { display: flex; flex-direction: column-reverse; gap: .45rem; margin: 1.75rem 0 2rem; }
 
   .rung {
     display: grid;
-    grid-template-columns: 3.5rem 1fr;
+    grid-template-columns: 2.6rem 1fr;
     align-items: baseline;
-    gap: 1.25rem;
-    padding: 1rem 1.25rem;
+    gap: 1.1rem;
+    padding: .95rem 1.2rem;
     border: 1px solid var(--rule);
     background: var(--surface);
     animation: rise .5s cubic-bezier(.2,.7,.3,1) backwards;
   }
 
-  .rung:nth-child(1) { animation-delay: .24s; }
-  .rung:nth-child(2) { animation-delay: .12s; }
-  .rung:nth-child(3) { animation-delay: 0s; }
+  .rung:nth-child(1) { animation-delay: .2s; }
+  .rung:nth-child(2) { animation-delay: .1s; }
 
-  @keyframes rise {
-    from { opacity: 0; transform: translateY(.5rem); }
-    to   { opacity: 1; transform: none; }
-  }
+  .rung-n { font-family: var(--mono); font-size: var(--s-sm); font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .rung-name { font-family: var(--mono); font-size: var(--s-sm); letter-spacing: .09em; text-transform: uppercase; display: block; margin-bottom: .3rem; }
+  .rung-desc { font-size: var(--s-base); color: var(--ink-soft); }
 
-  @media (prefers-reduced-motion: reduce) {
-    .rung { animation: none; }
-  }
-
-  .rung-n {
-    font-family: var(--mono);
-    font-size: var(--s-sm);
-    font-weight: 600;
-    letter-spacing: .04em;
-    color: var(--muted);
-  }
-
-  .rung-name {
-    font-family: var(--mono);
-    font-size: var(--s-sm);
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: .3rem;
-  }
-
-  .rung-desc {
-    font-size: var(--s-base);
-    color: var(--ink-soft);
-  }
-
-  .rung--rots  { border-left: 3px solid var(--accent); }
-  .rung--rots  .rung-name { color: var(--accent); }
+  .rung--rots  { border-left: 3px solid var(--rots); }
+  .rung--rots  .rung-name { color: var(--rots); }
   .rung--mid   { border-left: 3px solid var(--rule); }
   .rung--holds { border-left: 3px solid var(--holds); }
   .rung--holds .rung-name { color: var(--holds); }
@@ -221,211 +385,75 @@
     font-family: var(--mono);
     font-size: var(--s-xs);
     line-height: 1.5;
-    color: var(--accent);
-    background: var(--accent-soft);
+    color: var(--rots);
+    background: var(--rots-bg);
     padding: .45rem .6rem;
-    margin-top: .7rem;
+    margin-top: .65rem;
   }
 
-  /* ---------- sections ---------- */
+  /* ══════════ tables ══════════ */
 
-  section {
-    display: grid;
-    grid-template-columns: 9rem minmax(0, 1fr);
-    gap: 2.5rem;
-    padding: 3.25rem 0;
-    border-bottom: 1px solid var(--rule-soft);
-  }
+  .scroll { overflow-x: auto; margin: 0 0 1.4rem; }
 
-  .rail {
-    font-family: var(--mono);
-    font-size: var(--s-xs);
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    padding-top: .45rem;
-  }
-
-  .body { max-width: var(--measure); min-width: 0; }
-
-  h2 {
-    font-size: var(--s-xl);
-    line-height: 1.2;
-    font-weight: 600;
-    letter-spacing: -.015em;
-    text-wrap: balance;
-    margin: 0 0 1rem;
-  }
-
-  h3 {
-    font-family: var(--mono);
-    font-size: var(--s-sm);
-    font-weight: 600;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin: 2.25rem 0 .6rem;
-  }
-
-  p { margin: 0 0 1.05rem; text-wrap: pretty; }
-  .body > p:last-child { margin-bottom: 0; }
-
-  strong { font-weight: 600; }
-
-  em.term {
-    font-style: normal;
-    font-family: var(--mono);
-    font-size: .92em;
-    background: var(--surface-2);
-    padding: .08em .32em;
-  }
-
-  blockquote {
-    margin: 1.5rem 0;
-    padding: .1rem 0 .1rem 1.25rem;
-    border-left: 2px solid var(--accent);
-    font-size: var(--s-lg);
-    line-height: 1.45;
-    color: var(--ink);
-  }
-
-  blockquote p { margin: 0; }
-
-  ul { margin: 0 0 1.05rem; padding-left: 1.1rem; }
-  li { margin-bottom: .5rem; }
-  li::marker { color: var(--muted); }
-
-  /* ---------- data ---------- */
-
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
-    gap: 1px;
-    background: var(--rule);
-    border: 1px solid var(--rule);
-    margin: 0 0 1.5rem;
-  }
-
-  .stat {
-    background: var(--surface);
-    padding: .9rem 1rem;
-  }
-
-  .stat-n {
-    display: block;
-    font-family: var(--mono);
-    font-size: var(--s-lg);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -.02em;
-  }
-
-  .stat-l {
-    display: block;
-    font-family: var(--mono);
-    font-size: var(--s-xs);
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-top: .2rem;
-  }
-
-  .scroll { overflow-x: auto; margin: 0 0 1.5rem; }
-
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    font-size: var(--s-base);
-  }
+  table { border-collapse: collapse; width: 100%; font-size: var(--s-base); }
 
   th {
     font-family: var(--mono);
     font-size: var(--s-xs);
     font-weight: 600;
-    letter-spacing: .08em;
+    letter-spacing: .09em;
     text-transform: uppercase;
     text-align: left;
     color: var(--muted);
-    padding: .5rem .85rem .5rem 0;
+    padding: .5rem .9rem .5rem 0;
     border-bottom: 1px solid var(--rule);
     white-space: nowrap;
   }
 
   td {
-    padding: .65rem .85rem .65rem 0;
+    padding: .6rem .9rem .6rem 0;
     border-bottom: 1px solid var(--rule-soft);
     vertical-align: top;
     color: var(--ink-soft);
   }
 
-  td:first-child {
-    font-family: var(--mono);
-    font-size: var(--s-sm);
-    color: var(--ink);
-    white-space: nowrap;
-  }
+  td:first-child { font-family: var(--mono); font-size: var(--s-sm); color: var(--ink); white-space: nowrap; }
+  td.num { font-family: var(--mono); font-size: var(--s-sm); font-variant-numeric: tabular-nums; }
 
-  .yes { color: var(--holds); font-family: var(--mono); font-size: var(--s-sm); }
-  .no  { color: var(--accent); font-family: var(--mono); font-size: var(--s-sm); }
+  .v-holds { color: var(--holds); font-family: var(--mono); font-size: var(--s-sm); }
+  .v-rots  { color: var(--rots);  font-family: var(--mono); font-size: var(--s-sm); }
 
-  .panel {
-    border: 1px solid var(--rule);
-    background: var(--surface);
-    padding: 1.15rem 1.35rem;
-    margin: 1.5rem 0;
-  }
+  /* ══════════ panels + figure ══════════ */
 
-  .panel-label {
-    font-family: var(--mono);
-    font-size: var(--s-xs);
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin: 0 0 .6rem;
-  }
-
-  .panel p { font-size: var(--s-base); }
+  .panel { border: 1px solid var(--rule); background: var(--surface); padding: 1.05rem 1.25rem; margin: 1.5rem 0; max-width: 42rem; }
+  .panel > .label { display: block; margin: 0 0 .55rem; }
+  .panel p { font-size: var(--s-base); max-width: none; }
   .panel p:last-child { margin-bottom: 0; }
 
-  /* ---------- close ---------- */
+  figure { margin: 1.75rem 0; }
+  figure svg { display: block; width: 100%; height: auto; min-width: 42rem; }
+  figcaption { font-family: var(--mono); font-size: var(--s-xs); line-height: 1.55; color: var(--muted); margin-top: .9rem; max-width: 40rem; }
 
-  .close {
-    display: block;
-    padding: 3.5rem 0 0;
-    border-bottom: 0;
-  }
+  .dg-box { fill: var(--surface); stroke: var(--rule); stroke-width: 1.25; }
+  .dg-band { fill: none; stroke: var(--rule); stroke-width: 1.25; stroke-dasharray: 4 4; }
+  .dg-t { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; fill: var(--ink); }
+  .dg-s { font-family: var(--mono); font-size: 10.5px; fill: var(--muted); }
+  .dg-g { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; fill: var(--holds); }
+  .dg-line { stroke: var(--ink-soft); stroke-width: 1.25; fill: none; }
+  .dg-dash { stroke: var(--muted); stroke-width: 1.25; fill: none; stroke-dasharray: 4 4; }
+  .dg-gate { stroke: var(--holds); stroke-width: 2; }
 
-  .close h2 { font-size: var(--s-2xl); max-width: 30rem; }
-  .close .body { max-width: 40rem; }
+  /* ══════════ close ══════════ */
 
-  .contact {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .75rem;
-    margin-top: 2rem;
-  }
+  .close { border-top: 1px solid var(--rule); padding-top: 3.25rem; }
+  .close h2 { font-size: var(--s-2xl); }
 
-  .contact a {
-    font-family: var(--mono);
-    font-size: var(--s-sm);
-    letter-spacing: .04em;
-    color: var(--ink);
-    text-decoration: none;
-    border: 1px solid var(--rule);
-    background: var(--surface);
-    padding: .6rem 1rem;
-  }
-
-  .contact a:hover { border-color: var(--accent); color: var(--accent); }
-  .contact a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-  a { color: var(--accent); }
-
-  @media (max-width: 42rem) {
-    :root { --s-3xl: 2.25rem; --s-2xl: 1.85rem; --s-xl: 1.4rem; }
-    .masthead { padding-top: 3rem; }
-    section { grid-template-columns: 1fr; gap: 1rem; padding: 2.5rem 0; }
-    .rail { padding-top: 0; }
-    .rung { grid-template-columns: 2.5rem 1fr; gap: .85rem; }
+  @media (max-width: 46rem) {
+    :root { --s-3xl: 2.35rem; --s-2xl: 1.8rem; --s-xl: 1.35rem; }
+    .masthead { padding-top: 2.75rem; }
+    .wrap { padding-bottom: 3.5rem; }
+    .card { padding: 1.15rem 1.15rem 1.25rem; }
+    figure svg { min-width: 34rem; }
   }
 </style>
 </head>
@@ -433,290 +461,542 @@
 <div class="wrap">
 
   <header class="masthead">
-    <p class="eyebrow">Field report · agentic systems · 2026</p>
-    <h1>Nouns Rot.<br>Verbs Hold.</h1>
-    <p class="deck">Three months running an autonomous agent against a live, funded trading account — where a mistake is not a failed test, it is money. This is what actually breaks, and the engineering doctrine I ended up with.</p>
-    <div class="byline">
-      <span>Agent systems · Claude Code · MCP</span>
-      <span>Spain · CET</span>
-      <span>Available for contract work</span>
-    </div>
+    <span class="label fade fade-1">Independent engineer &middot; Spain, CET &middot; available for contract work</span>
+    <h1 class="fade fade-2">Agents that hold up when nobody is watching.</h1>
+    <p class="deck fade fade-3">I build AI agents, the tool and MCP layer underneath them, and the measurement that tells you honestly whether any of it works. For the past months I have been doing that against a live account, where a mistake is not a failed test.</p>
 
-    <div class="ladder">
-      <div class="rung rung--holds">
-        <span class="rung-n">03</span>
-        <span>
-          <span class="rung-name">World-state removal</span>
-          <span class="rung-desc">Delete the affordance. The wrong action is impossible, not forbidden. Actor-independent — the only rung that survives an actor who never read the rule.</span>
-        </span>
+    <dl class="facts">
+      <div class="fact">
+        <dt class="label">Practice</dt>
+        <dd>Agent reliability &middot; MCP &amp; tool architecture &middot; guardrails &middot; evaluation</dd>
       </div>
-      <div class="rung rung--mid">
-        <span class="rung-n">02</span>
-        <span>
-          <span class="rung-name">Verb — a refusal at the chokepoint</span>
-          <span class="rung-desc">An exit-code refusal, a tool-call deny, a hook that blocks turn-end. Holds for the loop it governs. Two ceilings: it cannot govern a spawned subagent's internals, and a deny on a <em class="term">discretionary</em> action only deters.</span>
-        </span>
-        <span class="rung-note">2.5 — where most "permanent" fixes actually sit. If removing the affordance is itself an action the actor must perform, a skipped step silently returns you to rung 1.</span>
+      <div class="fact">
+        <dt class="label">Stack</dt>
+        <dd>Python &middot; Claude Code &middot; MCP &middot; LLM APIs &middot; Chrome/CDP &middot; JS &middot; Unity</dd>
       </div>
-      <div class="rung rung--rots">
-        <span class="rung-n">01</span>
-        <span>
-          <span class="rung-name">Noun — a rule, a prompt line, a memory note</span>
-          <span class="rung-desc">Holds only while an actor reads it and chooses to comply. Rots first, and rots silently. Most "we fixed that" lives here.</span>
-        </span>
+      <div class="fact">
+        <dt class="label">How I work</dt>
+        <dd>Text-first and async &middot; fixed scope on the first piece &middot; calls where they earn it</dd>
       </div>
+      <div class="fact">
+        <dt class="label">Status</dt>
+        <dd>Taking on contract work now &middot; part-time or project</dd>
+      </div>
+    </dl>
+
+    <div class="actions">
+      <a class="btn btn--lead" href="mailto:qazwsx321234@gmail.com?subject=Agent%20engineering%20%E2%80%94%20enquiry">Email me</a>
+      <a class="btn" href="#work">Selected work</a>
+      <a class="btn" href="#report">The field report</a>
     </div>
   </header>
 
-  <section>
-    <div class="rail">The system</div>
-    <div class="body">
-      <h2>What was built</h2>
-      <p>An orchestrator that reads live market data, forms a directional thesis, arms conditional triggers, and submits real orders to a broker through MCP — then measures its own decisions after the close and feeds the result back into the next session's behaviour.</p>
+  <div class="shell">
 
-      <div class="stats">
-        <div class="stat"><span class="stat-n">533</span><span class="stat-l">Tool verbs</span></div>
-        <div class="stat"><span class="stat-n">36</span><span class="stat-l">Lifecycle hooks</span></div>
-        <div class="stat"><span class="stat-n">75</span><span class="stat-l">Live sessions</span></div>
-        <div class="stat"><span class="stat-n">42</span><span class="stat-l">Decision records</span></div>
-        <div class="stat"><span class="stat-n">8</span><span class="stat-l">Blocking rules (capped)</span></div>
-      </div>
+    <nav class="index" aria-label="Contents">
+      <span class="label">Contents</span>
+      <a href="#practice">What I'm hired for</a>
+      <a href="#work">Selected work</a>
+      <a href="#architecture">How it fits together</a>
+      <a href="#report">Field report</a>
+      <a href="#ladder">The durability ladder</a>
+      <a href="#enforcement">Guards and their ceilings</a>
+      <a href="#evaluator">The lying evaluator</a>
+      <a href="#control">Building the control group</a>
+      <a href="#governance">Governance and self-audit</a>
+      <a href="#engage">Working together</a>
+    </nav>
 
-      <p>Two MCP servers (one patched in place), a per-turn operating contract injected at prompt time rather than remembered, position state derived from broker truth rather than self-report, and a delegation layer that routes judgment-dense work to separate model seats and external research agents.</p>
+    <main>
 
-      <p>None of that is the interesting part. The interesting part is that it had a loss function. Most agent portfolios are demos that have never been wrong in a way that cost anything. This one was wrong repeatedly, expensively, and in writing.</p>
+      <!-- ═══════════ practice ═══════════ -->
+      <section id="practice">
+        <span class="label">The practice</span>
+        <h2>What I'm hired for</h2>
+        <p>Four things, and they are usually the same job seen from different sides. The through-line is that an agent which behaves well under supervision tells you almost nothing about how it behaves at 3am in week eleven.</p>
 
-      <div class="panel">
-        <p class="panel-label">Worked example — a bug with a price tag</p>
-        <p>A stop-loss placed inside a recently swept wick cost <strong>$846</strong> in one trade. The fix was not a warning. It became <em class="term">C4</em>, an arithmetic gate that rejects the order outright if the stop is not beyond the supplied wick extreme — verified by replaying the exact trade that produced the loss and confirming the gate now blocks it.</p>
-      </div>
-    </div>
-  </section>
+        <div class="caps">
+          <div class="cap">
+            <span class="cap-name">Agents that run unattended</span>
+            <p>Long-running loops that decide and act with nobody in the chair: state that is derived rather than remembered, obligations wired into the runtime instead of written into a prompt, and a resume path that survives a context reset in the middle of a task.</p>
+          </div>
+          <div class="cap">
+            <span class="cap-name">Tool and MCP architecture</span>
+            <p>Designing the tool surface an agent actually calls, including the unglamorous parts that decide whether it works: what a tool returns when it half-succeeds, where a timeout lands, and how the model is stopped from narrating a failure as a success.</p>
+          </div>
+          <div class="cap">
+            <span class="cap-name">Guardrails and refusal design</span>
+            <p>Enforcement at the chokepoint &mdash; an exit code, a tool deny, a hook that blocks the turn from ending &mdash; rather than instructions the model is trusted to follow. Including the honest half: which guards can be routed around, and by what.</p>
+          </div>
+          <div class="cap">
+            <span class="cap-name">Evaluation and measurement</span>
+            <p>Control groups for agent behaviour, replay harnesses that score decisions against blinded historical data, and pre-registration so a result cannot be quietly reshaped after it arrives. This is the layer most agent projects skip, and the one that tells you whether you have anything.</p>
+          </div>
+        </div>
 
-  <section>
-    <div class="rail">The core finding</div>
-    <div class="body">
-      <h2>Every fix sits on a durability ladder, and almost everyone mis-rates their own</h2>
-      <p>Across 27 tracked fixes, roughly half held and half decayed — and the split fell cleanly along one axis. Not correctness. Not importance. <strong>The location of authority.</strong></p>
+        <p style="margin-top:2rem">I build largely by directing AI coding agents, which is its own discipline and is exactly what everything below is about. The systems are mine end to end &mdash; architecture, implementation, operation &mdash; and the audit trail for every one of them is written down.</p>
+      </section>
 
-      <p>A requirement either executes on its own, or it waits to be noticed. A perfectly worded rule on a surface that must be <em>read</em> degrades within hours. A trivial rule wired into a chokepoint holds for months.</p>
+      <!-- ═══════════ work ═══════════ -->
+      <section id="work">
+        <span class="label">Selected work</span>
+        <h2>Six systems, and what each one actually took</h2>
+        <p>All of these are private &mdash; live systems, no published repos. What follows is the engineering, at the level of detail a technical buyer can judge. I walk through the code directly on a call.</p>
 
-      <div class="scroll">
-        <table>
-          <thead>
-            <tr><th>Mechanism</th><th>Class</th><th>Holds</th><th>Why</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Turn-end hook returning block</td><td>Verb</td><td class="yes">yes</td><td>The turn cannot end until satisfied.</td></tr>
-            <tr><td>Prompt-time context injection</td><td>Verb</td><td class="yes">yes</td><td>Physically present in the next prompt. Cannot be forgotten.</td></tr>
-            <tr><td>Non-zero exit at the entry point</td><td>Verb</td><td class="yes">yes</td><td>Enforcement sits at the chokepoint, not in a warning.</td></tr>
-            <tr><td>State derived from ground truth</td><td>Verb</td><td class="yes">yes</td><td>Computed, never claimed.</td></tr>
-            <tr><td>Rule in a doc that isn't auto-loaded</td><td>Noun</td><td class="no">no</td><td>Read at session start, gone by turn N, absent after a context reset.</td></tr>
-            <tr><td>A pointer to that doc</td><td>Noun</td><td class="no">no</td><td>Indirection to a noun is still a noun.</td></tr>
-            <tr><td>Hook on disk, unregistered in settings</td><td>Dead verb</td><td class="no">no</td><td>A retired verb is a noun.</td></tr>
-            <tr><td>State file trusted past its boundary</td><td>Stale noun</td><td class="no">no</td><td>Masquerades as ground truth.</td></tr>
-          </tbody>
-        </table>
-      </div>
+        <article class="card">
+          <div class="card-top">
+            <span class="chip chip--live">Live &middot; running</span>
+            <span class="label">Apr 2026 &rarr; present &middot; sole engineer: design, build, operation</span>
+          </div>
+          <h3>An AI agent operating unattended against a live account</h3>
+          <p>An orchestrator that reads live market data, forms a view, arms conditional triggers, submits real orders through an MCP tool surface, and then scores its own decisions after the close and feeds that back into how the next session runs. It has been running and evolving daily since April.</p>
+          <div class="took">
+            <span class="label">What it took</span>
+            <p>Two MCP servers in production. One built from scratch: seven tools over a swappable broker backend, a dedicated safety layer that sits between the model and the order, and its own integration bench simulating broker timeouts, rate limits and kill-switch fire. One third-party server patched in place, because its behaviour was wrong in a way that mattered and waiting for upstream was not an option.</p>
+            <p>Around that: a per-turn operating contract injected at prompt time rather than remembered, so a context reset cannot silently drop it. Position state derived from the broker on every read instead of from the agent's own log. Lifecycle hooks that refuse an action outright at the point of action &mdash; under a hard cap, because the interesting constraint is not adding guards but keeping them few: at most eight things may ever block a trade, and adding a ninth requires retiring one. A delegation layer that routes judgment-dense work to separate model seats with their model and reasoning effort pinned in version control, so a spawned worker cannot silently inherit the wrong configuration. Memory and retrieval designed to survive a fixed context budget across months. And a session-completeness contract, validated against a schema, that refuses to close a session with an artifact missing.</p>
+          </div>
+          <div class="figures">
+            <div class="fig"><b>2,200+</b><span>commits</span></div>
+            <div class="fig"><b>90+</b><span>recorded sessions</span></div>
+            <div class="fig"><b>58</b><span>decision records</span></div>
+            <div class="fig"><b>2</b><span>MCP servers</span></div>
+          </div>
+          <p class="stack">Python &middot; Claude Code &middot; MCP &middot; MetaTrader&nbsp;5 &middot; Chrome/CDP &middot; ChromaDB &middot; bash &middot; launchd/cron</p>
+        </article>
 
-      <h3>The permanence test</h3>
-      <blockquote><p>Does the fix still hold for an actor who never read it?</p></blockquote>
-      <p>A fresh context inherits the codebase's <em>behaviour</em>, never an instruction's <em>force</em>. Any fix whose enforcement is "the actor reads X and chooses to comply" is a noun with extra steps. It will rot the first session the actor is under pressure or hasn't loaded X.</p>
+        <article class="card">
+          <div class="card-top">
+            <span class="chip chip--live">In progress</span>
+            <span class="label">Aug 2026 &rarr; present &middot; sole engineer</span>
+          </div>
+          <h3>A falsification pipeline where the specification is frozen before it runs</h3>
+          <p>The current work. An offline pipeline that takes a hypothesis, freezes its full specification as a SHA-256 hash in an append-only, hash-chained registry <em>before</em> anything executes, and refuses to run at all if the spec's hash no longer matches the record. Every result lands in the same ledger as the claim it tests, alongside the sensitivity bound that limits what it is allowed to conclude.</p>
+          <div class="took">
+            <span class="label">What it took</span>
+            <p>A findings ledger now past three hundred entries, each one carrying its evidence and its own limits. Gauges that read the ledger rather than a summary of it &mdash; and a regression test asserting that a retraction is actually representable, added after discovering that an append-only log plus a read-every-row-as-current gauge are individually reasonable and jointly incapable of reporting that something was withdrawn. A stopping rule signed in advance and enforced in code, so the programme can be closed by evidence instead of by mood. An adversarial review seat that never sees the author's reasoning, because self-graded review is not review.</p>
+          </div>
+          <div class="figures">
+            <div class="fig"><b>320+</b><span>recorded findings</span></div>
+            <div class="fig"><b>SHA-256</b><span>spec freeze</span></div>
+            <div class="fig"><b>Hash-chained</b><span>append-only ledger</span></div>
+          </div>
+          <p class="stack">Python &middot; numpy/pandas &middot; content-addressed registries &middot; pre-registration</p>
+        </article>
 
-      <h3>And rung 3 is conditional</h3>
-      <p>The hardest lesson came from being wrong about this. We removed an affordance — a browser tab that could be disturbed mid-job — and declared the class of bug impossible. It recurred. The removal was itself <em>an action someone had to perform</em>, and on an off-canonical path it never ran.</p>
-      <p>So the real test is stricter: <strong>is the affordance never created, or is its removal a verb that fires regardless of the actor's path?</strong> A removal-by-action is rung 2.5, and it will fail exactly where you never walked.</p>
-    </div>
-  </section>
+        <article class="card">
+          <div class="card-top">
+            <span class="chip">Completed &middot; closed on schedule</span>
+            <span class="label">Feb &ndash; Jun 2026 &middot; sole engineer</span>
+          </div>
+          <h3>An automated research platform, and the simulator that judged it</h3>
+          <p>A strategy-discovery factory running roughly nine hundred and fifty search cycles over years of tick data, sitting on top of an execution simulator built specifically to be honest about fills, latency and cost, with a live execution tail deployed to a Chicago VPS. Four months, and the most useful thing it produced was a method, not a result.</p>
+          <div class="took">
+            <span class="label">What it took</span>
+            <p>Distributed Python pipelines, a full validation stack &mdash; combinatorially symmetric cross-validation, probability of overfitting, walk-forward, bootstrap and placebo comparators &mdash; and around sixteen hundred automated tests. Those tests still pass today on a repository untouched since June and on a newer Python than it was written for, which is the only test-suite claim I consider worth making.</p>
+            <p>The decisive contribution was learning to distrust the referee rather than the result, which is the finding written up further down this page. The programme was then closed against a stopping rule that had been frozen by hash before any real data was fit, reviewed by four independent adversarial passes, and its infrastructure torn down to zero cost the same day. Closing something deliberately, on a rule written before you knew the answer, is a skill; it is also the reason the next system starts with pre-registration built in.</p>
+          </div>
+          <div class="figures">
+            <div class="fig"><b>305</b><span>commits</span></div>
+            <div class="fig"><b>~1,600</b><span>tests passing</span></div>
+            <div class="fig"><b>~950</b><span>search cycles</span></div>
+          </div>
+          <p class="stack">Python &middot; numpy/pandas &middot; broker APIs &middot; Rithmic &middot; VPS &middot; launchd</p>
+        </article>
 
-  <section>
-    <div class="rail">Three more laws</div>
-    <div class="body">
-      <h2>What the recurrences taught, in order of depth</h2>
+        <article class="card">
+          <div class="card-top">
+            <span class="chip chip--live">Live &middot; in daily use</span>
+            <span class="label">2026 &middot; part of the agent system</span>
+          </div>
+          <h3>Domain retrieval the agent queries mid-session</h3>
+          <p>A local vector store built from roughly two hundred and seventy recorded lectures &mdash; transcription, chunking, embedding, and a query surface the running agent calls while it works. A second collection indexes the project's own accumulated lessons, so past mistakes are retrievable by meaning rather than by remembering the right word to grep for.</p>
+          <div class="took">
+            <span class="label">What it took</span>
+            <p>An ingestion pipeline that is idempotent, and a health check that asserts the exact expected chunk count at session start &mdash; because the failure mode of a rebuild is not an error, it is a store that is quietly two-thirds full and answers every question slightly wrong. Retrieval is run as batteries: the same question asked several ways, so one unlucky embedding does not get to decide an answer on its own.</p>
+          </div>
+          <div class="figures">
+            <div class="fig"><b>8,553</b><span>indexed chunks</span></div>
+            <div class="fig"><b>270+</b><span>source lectures</span></div>
+            <div class="fig"><b>2</b><span>collections</span></div>
+          </div>
+          <p class="stack">Python &middot; ChromaDB &middot; embeddings &middot; transcript processing</p>
+        </article>
 
-      <h3>A verb guards an action. A rule names a behaviour.</h3>
-      <p>"Don't disturb a running job" has at least three action-faces: kill it, touch it, over-poll it. We guarded the <em>kill</em> face, marked the behaviour fixed, and the <em>touch</em> face — still naked, still a noun — failed weeks later. When you convert a behaviour to a verb, enumerate every face it covered and either guard each or record explicitly which remain unguarded. Guarding one face and declaring victory is precisely how a "fixed" bug comes back.</p>
+        <article class="card">
+          <div class="card-top">
+            <span class="chip chip--live">Shipped &middot; playable</span>
+            <span class="label">Aug 2026 &middot; sole developer</span>
+          </div>
+          <h3>Mole&nbsp;Deep &mdash; a mobile-first survival game in one HTML file</h3>
+          <p>A dig-and-build survival game that runs from a single self-contained file: no build step, no dependencies, no server, nothing to install. Three verbs and one contextual action, on the design constraint that a player holding a phone should never have to open a menu to find out what the button does right now.</p>
+          <div class="took">
+            <span class="label">What it took</span>
+            <p>A canvas render loop and touch controls that survive a thumb, a simulation with hunger, thirst, temperature and hostile AI, and a systems design where storing your materials happens by walking into the room rather than by pressing anything. It was built with a different model family than the rest of the work on this page, on purpose: the transferable skill is directing the agent well, not being loyal to one vendor's API.</p>
+          </div>
+          <p class="stack">JavaScript &middot; Canvas &middot; zero dependencies &middot; single-file distribution</p>
+        </article>
 
-      <h3>The fix ledger is write-only</h3>
-      <p>The deepest failure isn't that fixes rot. It's that at the moment of recurrence, the lookup <em>"have we seen this exact thing before?"</em> never fires. We recorded six dated recurrences of one bug beautifully, and read none of them while diagnosing the seventh. Recognition needs a chokepoint too, or you will re-diagnose solved problems forever.</p>
+        <article class="card">
+          <div class="card-top">
+            <span class="chip">In progress</span>
+            <span class="label">Jul 2026 &rarr; present &middot; sole developer</span>
+          </div>
+          <h3>Unity work, and one project paused on an honest verdict</h3>
+          <p>Tidy Haven, a cozy Android game, was built to a playable chapter and then paused: the core action read as doing chores rather than as caring for a place, and no amount of polish was going to repair the fantasy underneath it. The work moved to Shelter, a survivor-management slice &mdash; days to prepare and scavenge, nights to endure &mdash; which is the one currently in progress.</p>
+          <div class="took">
+            <span class="label">What it took</span>
+            <p>Unity and C#, an Android build pipeline, and &mdash; the part that transfers &mdash; a session harness that prints the single next task with its rationale, its traps and its done-condition, so an AI agent picking the project up with no memory of yesterday cannot wander off into work nobody asked for. That harness is the same idea as the per-turn contract in the trading system, applied to a completely different domain.</p>
+          </div>
+          <p class="stack">Unity &middot; C# &middot; Android &middot; agent-directed task harness</p>
+        </article>
+      </section>
 
-      <h3>A subagent is a one-shot worker</h3>
-      <p>Nothing self-re-animates a dormant agent. I tried an inline sleep; it returned early. I tried leaving a live background child expecting the parent to wake on its completion; it didn't. The durable form of "continue this later" is the <strong>foreground being re-invoked by an automatic harness event</strong> — a scheduled wake, a cron, a task completion. Delegate the work; never delegate the clock. This is the concurrency form of the permanence test, and it cost several silent failures to learn.</p>
-    </div>
-  </section>
+      <!-- ═══════════ architecture ═══════════ -->
+      <section id="architecture">
+        <span class="label">Architecture</span>
+        <h2>How an unattended loop is actually put together</h2>
+        <p>The shape below is the one I keep rebuilding, in trading and outside it. Two details carry most of the weight: state is read from ground truth on every pass rather than carried forward in the model's own summary, and the places where the system can refuse are explicit, few, and sit on the path itself rather than in the instructions.</p>
 
-  <section>
-    <div class="rail">The hardest case</div>
-    <div class="body">
-      <h2>There is no technical wall on your own account</h2>
-      <p>The system's second job was enforcing limits against a <em>human</em> operator — one whose judgment is compromised at exactly the moment the limit matters. This is the permanence test with the difficulty turned up: the actor doesn't merely forget the rule, he is actively motivated to route around it.</p>
+        <figure>
+          <svg viewBox="0 0 800 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="dg-title">
+            <title id="dg-title">Architecture of an unattended agent loop: a ground-truth band feeding a five-stage loop with two chokepoints, writing to an append-only record that feeds the next session.</title>
 
-      <p>I built five enforcement mechanisms over five weeks. <strong>Live events defeated all five.</strong> Each failure is dated, and each is recorded next to the claim it killed.</p>
+            <defs>
+              <marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L8 4 L0 8 z" fill="var(--ink-soft)"></path>
+              </marker>
+              <marker id="ahd" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L8 4 L0 8 z" fill="var(--muted)"></path>
+              </marker>
+            </defs>
 
-      <div class="scroll">
-        <table>
-          <thead>
-            <tr><th>Mechanism</th><th>Intended guarantee</th><th>What live tape did to it</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Firewall IP block</td><td>Cut the broker connection</td><td>Defeated structurally — the vendor rotates across a global access-point pool; the client finds fresh unblocked IPs within seconds.</td></tr>
-            <tr><td>Automated close-all</td><td>Flatten on breach</td><td>Broker-rejected five times, exactly while the account was bleeding. Best-effort, never a guarantee.</td></tr>
-            <tr><td>Credential custody</td><td>Remove the keys</td><td>Refuted — the provider holds a master reset behind every self-imposed lock.</td></tr>
-            <tr><td>Polling watcher</td><td>Catch off-channel activity</td><td>Caught 2 of 9. Seven opened and closed between polls — a sampler cannot catch what round-trips faster than its interval.</td></tr>
-            <tr><td>In-channel brake</td><td>Stop the session</td><td>Fired correctly — and relocated the activity to the unguarded channel four minutes later at 1.67× the size.</td></tr>
-          </tbody>
-        </table>
-      </div>
+            <!-- ground truth band -->
+            <rect class="dg-band" x="40" y="16" width="678" height="40"></rect>
+            <text class="dg-t" x="56" y="34">GROUND TRUTH</text>
+            <text class="dg-s" x="56" y="49">live tape &middot; broker positions &middot; account state &mdash; re-read every pass, never remembered</text>
 
-      <h3>The finding that generalizes</h3>
-      <blockquote><p>A partial block is worse than none. It doesn't stop the behaviour — it herds it into the channel you can't see.</p></blockquote>
-      <p>That last row is the one I'd carry into any system with a human or an agent in the loop. Every constraint added to the <em>observed</em> path raises pressure on the <em>unobserved</em> one. Enforcement that covers most of the surface doesn't get you most of the protection; it gets you the same behaviour, now invisible, and usually larger. Defend the resource, never the interface.</p>
+            <!-- feeds -->
+            <path class="dg-line" d="M99 56 L99 122" marker-end="url(#ah)"></path>
+            <path class="dg-line" d="M519 122 L519 56" marker-end="url(#ah)"></path>
 
-      <h3>What actually held</h3>
-      <p>Not a lock — an honest, layered posture, correctly labelled: <strong>friction that announces itself</strong> (a re-entry path that takes ten minutes and cannot be done quietly, which breaks the two things the behaviour runs on: speed and secrecy); <strong>a single instrumented channel</strong> so every action lands in one recorded surface and post-session diagnosis is possible at all; and <strong>ground-truth measurement</strong> — judge by the broker's balance, never by the system's own log, because the damaging path leaves zero rows in it.</p>
+            <!-- loop boxes -->
+            <rect class="dg-box" x="40"  y="126" width="118" height="46"></rect>
+            <text class="dg-t" x="99"  y="148" text-anchor="middle">READ</text>
+            <text class="dg-s" x="99"  y="163" text-anchor="middle">perceive</text>
 
-      <div class="panel">
-        <p class="panel-label">Killed by our own data, before shipping</p>
-        <p>Loss-streak locks, post-loss cooldowns and a proportional give-back ratchet all <em>sounded</em> right. Replayed against real sessions, every one of them fired repeatedly on healthy days. Better: the ratchet's original simulation was found to contain <strong>look-ahead bias</strong> — it computed the floor from the day's final high — and replaying it honestly tripped the very day used to justify it.</p>
-        <p>All three were cut. What shipped instead was derived from the replay: a flat give-back threshold, a rapid-reversal fuse and a size sentinel. When one of them first fired live, the falsification held too — a cadence brake would have made that day <em>worse</em>, cutting the session's two largest winners out of the run.</p>
-      </div>
+            <rect class="dg-box" x="180" y="126" width="118" height="46"></rect>
+            <text class="dg-t" x="239" y="148" text-anchor="middle">DECIDE</text>
+            <text class="dg-s" x="239" y="163" text-anchor="middle">form a view</text>
 
-      <p>That is the part I'd want judged. Not that the guardrails worked — several didn't. That each one was measured, its failure written down in the same place as its claim, and the next design derived from the evidence rather than from what would have been reassuring to believe.</p>
-    </div>
-  </section>
+            <rect class="dg-box" x="320" y="126" width="118" height="46"></rect>
+            <text class="dg-t" x="379" y="148" text-anchor="middle">ARM</text>
+            <text class="dg-s" x="379" y="163" text-anchor="middle">conditional plan</text>
 
-  <section>
-    <div class="rail">The layer underneath</div>
-    <div class="body">
-      <h2>Your evaluator is the thing most likely to be lying to you</h2>
-      <p>Everything above is about making behaviour hold. This is about whether the evidence you used to decide was real in the first place — and it comes from an earlier system of mine that searched for strategies automatically and scored them against a simulator.</p>
+            <rect class="dg-box" x="460" y="126" width="118" height="46"></rect>
+            <text class="dg-t" x="519" y="148" text-anchor="middle">EXECUTE</text>
+            <text class="dg-s" x="519" y="163" text-anchor="middle">MCP &rarr; broker</text>
 
-      <p>Its flagship result: <strong>Sharpe 13.76, probability-of-overfitting 0.0%, deflated Sharpe 1.0000.</strong> Every standard referee passed. It then blew three funded accounts inside a month.</p>
+            <rect class="dg-box" x="600" y="126" width="118" height="46"></rect>
+            <text class="dg-t" x="659" y="148" text-anchor="middle">MEASURE</text>
+            <text class="dg-s" x="659" y="163" text-anchor="middle">score the call</text>
 
-      <p>The search wasn't broken. The search was optimizing against a simulator with a defect — and the overfitting statistics were computed <em>inside that same biased simulator</em>. Re-run on an honest execution model over the identical 89 sessions, the same strategy returns <strong>−$3,321, Sharpe −1.69</strong>. The backtest had been faithfully describing an engine that did not exist.</p>
+            <!-- edges -->
+            <path class="dg-line" d="M158 149 L176 149" marker-end="url(#ah)"></path>
+            <path class="dg-line" d="M298 149 L316 149" marker-end="url(#ah)"></path>
+            <path class="dg-line" d="M438 149 L456 149" marker-end="url(#ah)"></path>
+            <path class="dg-line" d="M578 149 L596 149" marker-end="url(#ah)"></path>
 
-      <h3>Three laws, each with a price attached</h3>
-      <ul>
-        <li><strong>An optimizer converges on your evaluator's defects, not on your objective.</strong> Goodhart isn't a risk to mitigate; it is the default output of any search loop given enough iterations.</li>
-        <li><strong>Standard referees check the return side and cannot see a violation on the signal side.</strong> A separate screen passed bootstrap, placebo, a comparator and all 13 trigger years. One look-ahead field removed, it went from +150bp to −9bp — indistinguishable from doing nothing. Only an information-set audit catches that class.</li>
-        <li><strong>A green test suite certifies capability presence, not operational effect.</strong> 1,571 passing tests covered 16 self-improvement mechanisms. In a real multi-hour run, <strong>two of them fired.</strong> The rest were wired, enabled, tested and inert — mostly killed by one silently-empty collection at an adapter boundary.</li>
-      </ul>
+            <!-- chokepoints -->
+            <line class="dg-gate" x1="307" y1="134" x2="307" y2="164"></line>
+            <line class="dg-gate" x1="447" y1="134" x2="447" y2="164"></line>
+            <text class="dg-g" x="307" y="192" text-anchor="middle">capital gate</text>
+            <text class="dg-s" x="307" y="206" text-anchor="middle">&le;8 rules may ever refuse</text>
+            <text class="dg-g" x="447" y="192" text-anchor="middle">pre-flight</text>
+            <text class="dg-s" x="447" y="206" text-anchor="middle">arithmetic, not advice</text>
 
-      <p>What finally worked was inverting the order: <strong>validate the validator against a known-null before trusting any positive.</strong> Synthetic driftless data, the full gate stack, ~66,000 trades — <strong>0 survivors out of 30.</strong> On data with no edge to find, the evaluator manufactured none. And that pass was recorded with its own honest bound: 0/30 constrains the false-positive rate to roughly 10%, no better.</p>
+            <!-- turn-end hook -->
+            <rect class="dg-box" x="600" y="196" width="118" height="30"></rect>
+            <text class="dg-s" x="659" y="215" text-anchor="middle">turn-end hook: blocks</text>
+            <path class="dg-line" d="M659 172 L659 192" marker-end="url(#ah)"></path>
 
-      <blockquote><p>If you are running an agent loop against an LLM judge or a synthetic eval, this is your problem, not a trading problem. The loop will find your judge's blind spots faster than it finds the behaviour you asked for.</p></blockquote>
-    </div>
-  </section>
+            <!-- record band -->
+            <rect class="dg-band" x="40" y="262" width="678" height="44"></rect>
+            <text class="dg-t" x="56" y="281">APPEND-ONLY RECORD</text>
+            <text class="dg-s" x="56" y="296">decisions &middot; verdicts &middot; retractions &mdash; the only surface a claim is allowed to live on</text>
 
-  <section>
-    <div class="rail">The measurement</div>
-    <div class="body">
-      <h2>I built the control group for my own judgment. It came back at chance.</h2>
-      <p>Across 409 recorded decisions the system had never scored what it <em>rejected</em>. Every gauge measured the trades it took, so the question underneath all the others — does the selection carry any information at all? — had never been asked. So I built the control: each real decision scored against random entries drawn from the same day, the same side, the same stop distance, differing only in <em>which minute was chosen</em>.</p>
+            <path class="dg-line" d="M659 226 L659 258" marker-end="url(#ah)"></path>
+            <path class="dg-dash" d="M239 262 L239 176" marker-end="url(#ahd)"></path>
+            <text class="dg-s" x="248" y="248">what the last session learned</text>
+          </svg>
+          <figcaption>The two vertical marks are the only places in the loop that may refuse. Everything else advises. Keeping that number small is a design constraint, enforced by an audit that fails the build rather than by intention.</figcaption>
+        </figure>
+      </section>
 
-      <div class="stats">
-        <div class="stat"><span class="stat-n">0.496</span><span class="stat-l">Selection percentile</span></div>
-        <div class="stat"><span class="stat-n">.453–.540</span><span class="stat-l">95% CI</span></div>
-        <div class="stat"><span class="stat-n">82</span><span class="stat-l">Scored decisions</span></div>
-        <div class="stat"><span class="stat-n">0.500</span><span class="stat-l">Chance</span></div>
-      </div>
+      <!-- ═══════════ field report ═══════════ -->
+      <section id="report">
+        <span class="label">Field report</span>
+        <h2>Nouns rot. Verbs hold.</h2>
+        <p>What follows is the part of the work I would actually want judged: a set of findings that each came from something specific going wrong on a system where being wrong had a consequence, written down at the time, with the evidence that produced them.</p>
+        <p>Most agent portfolios are demos that have never been wrong in a way that cost anything. This one had a loss function from the first week, and it was not a metric I chose.</p>
 
-      <p>Chance. Months of loop engineering sat on top of a signal that carried no measurable information — and no amount of tuning the loop was going to change that, because the loop was never the constrained part. The response was structural rather than cosmetic: live discretionary trading stopped, learning moved offline where a rule can be pre-registered and killed cheaply, and every hypothesis now freezes its specification as a SHA-256 hash in an append-only, hash-chained registry <em>before</em> it may run. The runner refuses to execute if the spec's hash no longer matches the one on record.</p>
+        <div class="panel">
+          <span class="label">A defect with a price attached</span>
+          <p>A stop-loss placed inside a recently swept price wick cost <strong>$846</strong> on a single order. The fix was not a warning and not a note in a document. It became an arithmetic gate that rejects the order outright when the stop is not beyond the supplied wick extreme &mdash; and it was verified by replaying the exact trade that produced the loss and confirming that the gate now refuses it. That replay is the difference between a fix and a claim of a fix.</p>
+        </div>
+      </section>
 
-      <h3>Then the new instrument tried to fool me, twice, in one evening</h3>
+      <!-- ═══════════ ladder ═══════════ -->
+      <section id="ladder">
+        <span class="label">The core finding</span>
+        <h2>Every fix sits on a durability ladder, and almost everyone mis-rates their own</h2>
+        <p>Across twenty-seven tracked fixes, roughly half held and half decayed &mdash; and the split fell cleanly along one axis. Not correctness. Not importance. <strong>The location of authority.</strong></p>
 
-      <p>First real use: three textbook mechanical rules, fully specified and frozen in a commit before anything ran. One came back at <strong>0.725, its confidence interval clear of chance</strong> — a survivor, on the first attempt, which is exactly the result I was hoping for.</p>
+        <div class="ladder">
+          <div class="rung rung--holds">
+            <span class="rung-n">03</span>
+            <span>
+              <span class="rung-name">World-state removal</span>
+              <span class="rung-desc">Delete the affordance. The wrong action is impossible rather than forbidden. The only rung that survives an actor who never read the rule.</span>
+            </span>
+          </div>
+          <div class="rung rung--mid">
+            <span class="rung-n">02</span>
+            <span>
+              <span class="rung-name">Verb &mdash; a refusal at the chokepoint</span>
+              <span class="rung-desc">An exit-code refusal, a tool-call deny, a hook that blocks turn-end. Holds for the loop it governs. Two ceilings: it cannot reach inside a spawned subagent, and a deny on a <em class="t">discretionary</em> action only deters.</span>
+            </span>
+            <span class="rung-note">2.5 &mdash; where most &ldquo;permanent&rdquo; fixes actually sit. If removing the affordance is itself an action someone must perform, a skipped step returns you silently to rung 1.</span>
+          </div>
+          <div class="rung rung--rots">
+            <span class="rung-n">01</span>
+            <span>
+              <span class="rung-name">Noun &mdash; a rule, a prompt line, a memory note</span>
+              <span class="rung-desc">Holds only while an actor reads it and chooses to comply. Rots first, and rots silently. Most &ldquo;we fixed that&rdquo; lives here.</span>
+            </span>
+          </div>
+        </div>
 
-      <p>It took one question to kill it. <em>Is this measuring the moment the rule chose, or just where in the local price range it happened to enter?</em> Under a fixed stop with no profit target, an entry below its neighbours has a lower stop and a longer run to the close — it beats them <em>arithmetically</em>, whether or not it predicted anything. Every rule's score turned out to be reproduced by entry-price position alone.</p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Mechanism</th><th>Class</th><th>Holds</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Turn-end hook returning block</td><td>Verb</td><td class="v-holds">yes</td><td>The turn cannot end until it is satisfied.</td></tr>
+              <tr><td>Prompt-time context injection</td><td>Verb</td><td class="v-holds">yes</td><td>Physically present in the next prompt. Cannot be forgotten.</td></tr>
+              <tr><td>Non-zero exit at the entry point</td><td>Verb</td><td class="v-holds">yes</td><td>Enforcement sits on the path, not in a warning.</td></tr>
+              <tr><td>State derived from ground truth</td><td>Verb</td><td class="v-holds">yes</td><td>Computed, never claimed.</td></tr>
+              <tr><td>Rule in a doc that isn't auto-loaded</td><td>Noun</td><td class="v-rots">no</td><td>Read at session start, gone by turn N, absent after a reset.</td></tr>
+              <tr><td>A pointer to that doc</td><td>Noun</td><td class="v-rots">no</td><td>Indirection to a noun is still a noun.</td></tr>
+              <tr><td>Hook on disk, unregistered in settings</td><td>Dead verb</td><td class="v-rots">no</td><td>A retired verb is a noun.</td></tr>
+              <tr><td>State file trusted past its boundary</td><td>Stale noun</td><td class="v-rots">no</td><td>Masquerades as ground truth.</td></tr>
+            </tbody>
+          </table>
+        </div>
 
-      <div class="scroll">
-        <table>
-          <thead>
-            <tr><th>Rule</th><th>Score vs time-matched control</th><th>Its entry-price position</th><th>Vs price-matched control</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Breakout</td><td>0.388</td><td>0.361</td><td class="yes">0.484</td></tr>
-            <tr><td>Fade</td><td>0.580</td><td>0.590</td><td class="yes">0.553</td></tr>
-            <tr><td>Reversion</td><td>0.725</td><td>0.857</td><td class="yes">0.618</td></tr>
-          </tbody>
-        </table>
-      </div>
+        <h3>The permanence test</h3>
+        <blockquote><p>Does the fix still hold for an actor who never read it?</p></blockquote>
+        <p>A fresh context inherits the codebase's <em>behaviour</em> and never an instruction's <em>force</em>. Any fix whose enforcement is &ldquo;the actor reads X and chooses to comply&rdquo; is a noun with extra steps. It will rot the first session the actor is under time pressure or has not loaded X.</p>
 
-      <p>Read the third row: the "best" rule was in fact the one <em>wasting</em> the most favourable entries it had been handed. Once the control matched on price as well as time, all three collapsed onto chance and the survivor was withdrawn — into the same append-only ledger that had recorded it, because a registry you can quietly edit is not evidence of anything.</p>
+        <h3>And the top rung is conditional</h3>
+        <p>The hardest lesson here came from being wrong about it. We removed an affordance &mdash; a browser tab that could be disturbed mid-job &mdash; and declared that whole class of bug impossible. It recurred. The removal was itself <em>an action someone had to perform</em>, and on a path nobody had walked it never ran.</p>
+        <p>So the real test is stricter than it first looks: <strong>is the affordance never created, or is its removal a verb that fires regardless of which path the actor took?</strong> A removal-by-action is rung 2.5, and it fails exactly where you never walked.</p>
 
-      <div class="panel">
-        <p class="panel-label">And the dashboard kept reporting the dead survivor</p>
-        <p>The pace gauge counted every <em class="term">survived</em> row as current, so appending the withdrawal left the headline still reading <strong>survivors: 1</strong>. An append-only ledger and a gauge that treats every row as current are each individually reasonable and jointly incapable of representing a retraction — the pair could only ever <em>overstate</em>. Fixed to take the latest verdict per candidate, proved by mutation, and given a regression test that asserts both values: reported while it stands, gone once withdrawn.</p>
-      </div>
+        <h3>Three findings underneath that one</h3>
 
-      <p>Three further false findings surfaced the same night in the data layer, each caught by <em>running</em> a check rather than reading it: an integrity gate that excluded the primary instrument over "weekend" bars that were a timezone convention of my own; a table that appeared to show older market history degrading in quality, where every degraded year was in fact a public holiday; and a cross-feed price comparison reporting a ±14-point disagreement, because it compared one feed's closing price against the other's within-minute average.</p>
+        <h4>A verb guards an action; a rule names a behaviour</h4>
+        <p>&ldquo;Don't disturb a running job&rdquo; has at least three action-faces: kill it, touch it, over-poll it. We guarded the <em>kill</em> face, marked the behaviour fixed, and the <em>touch</em> face &mdash; still naked, still a noun &mdash; failed weeks later. When you convert a behaviour into a verb, enumerate every face it covered and either guard each one or write down explicitly which remain unguarded. Guarding one face and declaring victory is precisely how a fixed bug comes back.</p>
 
-      <blockquote><p>A control group that differs from the treatment in more than one way measures the difference you did not intend.</p></blockquote>
+        <h4>The fix ledger is write-only unless recognition has a chokepoint too</h4>
+        <p>The deeper problem is not that fixes rot. It is that at the moment of recurrence, the lookup <em>have we seen this exact thing before?</em> never fires. We recorded six dated recurrences of one bug, beautifully, and read none of them while diagnosing the seventh. Recognition needs a trigger on the path, or you will re-diagnose solved problems indefinitely.</p>
 
-      <p>If you A/B test agent behaviour, or score a model against an LLM judge, this is the failure mode most likely to cost you: not a broken metric, but a well-built one whose comparison arm quietly differs on a second axis. The tell is that the result is the one you wanted and it arrived sooner than expected. Every number above was produced, published <em>and</em> refuted by the same system inside one evening — and all of it, the survivor, the withdrawal, and the achieved sensitivity bound attached to each kill, sits in one hash-chained file whose row count is the multiplicity denominator.</p>
-    </div>
-  </section>
+        <h4>Delegate the work, never the clock</h4>
+        <p>Nothing self-re-animates a dormant agent. I tried an inline sleep; it returned early. I tried leaving a live background child and expecting the parent to wake on its completion; it did not. The durable form of &ldquo;continue this later&rdquo; is the foreground being re-invoked by an automatic harness event &mdash; a scheduled wake, a cron, a task-completion callback. This is the permanence test in its concurrency form, and it cost several silent no-ops to learn.</p>
+      </section>
 
-  <section>
-    <div class="rail">Governance</div>
-    <div class="body">
-      <h2>Letting an agent modify its own machinery without letting it ratchet</h2>
-      <p>The agent designs and implements its own tooling. That removes the natural over-build alarm, so the constraints have to be structural rather than tasteful.</p>
+      <!-- ═══════════ enforcement ═══════════ -->
+      <section id="enforcement">
+        <span class="label">The hardest case</span>
+        <h2>Every guard has a ceiling, and the pattern in those ceilings is the finding</h2>
+        <p>The system's second job was enforcing a limit against a <em>human</em> operator whose judgment is compromised at exactly the moment the limit matters. This is the permanence test with the difficulty turned up: the actor does not merely forget the rule, he is motivated to route around it.</p>
+        <p>I built five mechanisms across five weeks and put each one in front of live conditions. Every one has a real ceiling; each is dated and recorded next to the claim it corrected. This is the table I would want any client with an agent in a sensitive path to read before they trust their own guardrail.</p>
 
-      <ul>
-        <li><strong>A hard budget on blocking rules.</strong> At most eight things may ever refuse a trade. Adding a ninth requires retiring one. Enforced by an audit that runs at every session close, not by good intentions.</li>
-        <li><strong>Tiered change authority.</strong> Reversible bug fixes ship autonomously. Parameter tunes ship but are logged. Any new per-turn artifact, gate or mechanism requires an explicit proposal. Critically: <em>what a change touches sets its tier — not how the agent narrates it.</em> "It's only a knob" is not a downgrade.</li>
-        <li><strong>Bright lines that are proposal-only, permanently.</strong> Capital values, the risk rules, the enforcement budget, anything irreversible.</li>
-        <li><strong>External, non-self-graded refutation.</strong> Any significant design is attacked by a fresh context that never saw the design's framing, given only the proposal and the project's known anti-patterns and told to break it. The verdict is pasted in verbatim. The author does not get to write its own opposition.</li>
-        <li><strong>Ship the gauge with the mechanism.</strong> Every mechanism carries at least one outcome-based success criterion. "The gauge fired" is not evidence. An audit fails the build if a decision record declares a gate without shipping its measurement.</li>
-        <li><strong>Automatic suspension.</strong> The grant revokes itself if per-turn surface grows without an approved budget raise, if anything ships without its gauge, or if performance regresses alongside self-authored mechanisms.</li>
-      </ul>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Mechanism</th><th>Intended guarantee</th><th>The ceiling live conditions found</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Firewall IP block</td><td>Cut the connection</td><td>Structural. The vendor rotates across a global access-point pool; the client finds fresh unblocked addresses within seconds.</td></tr>
+              <tr><td>Automated close-all</td><td>Flatten on breach</td><td>Broker-rejected five times, precisely when it was needed most. Best-effort, never a guarantee &mdash; and it must be labelled as such.</td></tr>
+              <tr><td>Credential custody</td><td>Remove the keys</td><td>The provider holds a master reset behind every self-imposed lock.</td></tr>
+              <tr><td>Polling watcher</td><td>Catch off-channel activity</td><td>Caught 2 of 9. A sampler cannot see what round-trips faster than its interval.</td></tr>
+              <tr><td>In-channel brake</td><td>Stop the session</td><td>Fired correctly &mdash; and relocated the activity to the unguarded channel four minutes later at 1.67&times; the size.</td></tr>
+            </tbody>
+          </table>
+        </div>
 
-      <p>The first change made under this charter was reviewed by an external pass, found to be redundant and built on a false premise, and <strong>reverted to zero net code</strong>. That is the charter working, not failing.</p>
-    </div>
-  </section>
+        <h3>The finding that generalizes</h3>
+        <blockquote><p>A partial block does not stop the behaviour. It herds it into the channel you cannot see.</p></blockquote>
+        <p>That last row is the one I would carry into any system with a human or an agent in the loop. Every constraint added to the <em>observed</em> path raises pressure on the <em>unobserved</em> one. Enforcement covering most of the surface does not buy you most of the protection; it buys you the same behaviour, now invisible, and usually larger. Defend the resource, not the interface.</p>
 
-  <section>
-    <div class="rail">Honesty</div>
-    <div class="body">
-      <h2>The part that actually made it work</h2>
-      <p>The single highest-value habit was periodically auditing the system's claims about <em>itself</em> and writing down where they were false. These passes are recorded in place, permanently, next to the claim they corrected.</p>
+        <h3>What did hold</h3>
+        <p>Not a lock. A layered posture, correctly labelled. <strong>Friction that announces itself</strong> &mdash; a re-entry path that takes ten minutes and cannot be done quietly, which breaks the two things the behaviour runs on, speed and secrecy. <strong>A single instrumented channel</strong>, so every action lands on one recorded surface and diagnosis afterwards is possible at all. And <strong>ground-truth measurement</strong>: judge by the broker's own balance, never by the system's log, because the path you care about leaves no rows in it.</p>
 
-      <div class="panel">
-        <p class="panel-label">From the enforcement registry, verbatim</p>
-        <p>The prior "audit auto-demotes unused rules" clause was <strong>false</strong> — the field it depended on is empty on every item and no code reads it. Retirement is a manual hand-edit. Do not build the auto-demote; the diagnosis itself warns that such criteria "existed on paper and were never exercised."</p>
-      </div>
+        <div class="panel">
+          <span class="label">Cut by our own data, before shipping</span>
+          <p>Loss-streak locks, post-loss cooldowns and a proportional give-back ratchet all <em>sounded</em> right. Replayed against real recorded sessions, every one of them fired repeatedly on healthy days. Better: the ratchet's original simulation was found to contain <strong>look-ahead bias</strong> &mdash; it computed its floor from the day's final high &mdash; and replaying it honestly tripped the very day that had been used to justify it.</p>
+          <p>All three were cut. What shipped instead was derived from the replay: a flat threshold, a rapid-reversal fuse and a size sentinel. When one of them first fired live, the falsification held up too &mdash; the cadence brake we had rejected would have made that day worse, cutting the session's two largest winners out of the run.</p>
+        </div>
+      </section>
 
-      <p>Elsewhere: a rule set documented as enforced was audited and found to be enforced in three places, advisory in one, and entirely absent in another — and the document was rewritten to say so, in bold, rather than quietly fixed. Every significant decision record names its own blind spots, its confounds, and what evidence would invalidate it.</p>
+      <!-- ═══════════ evaluator ═══════════ -->
+      <section id="evaluator">
+        <span class="label">The layer underneath</span>
+        <h2>Your evaluator is the thing most likely to be lying to you</h2>
+        <p>Everything above is about making behaviour hold. This is about whether the evidence you used to decide was real in the first place, and it comes from the earlier research platform &mdash; the one that searched for strategies automatically and scored them against a simulator.</p>
+        <p>Its flagship candidate came back with <strong>Sharpe 13.76, probability of overfitting 0.0%, deflated Sharpe 1.0000</strong>. Every standard referee passed it. It did not survive contact with live execution.</p>
+        <p>The search was not broken. The search was optimizing against a simulator with a defect &mdash; and the overfitting statistics were computed <em>inside that same defective simulator</em>. Re-run on an honest execution model over the identical 89 sessions, the same candidate inverts completely: <strong>Sharpe &minus;1.69</strong>. The backtest had been faithfully describing an engine that did not exist.</p>
 
-      <p>This matters more in agent systems than anywhere else I've worked, because an agent will confidently narrate an obligation as satisfied. <strong>Every claim of "done" that isn't derived from ground truth is a claim you will pay for later.</strong></p>
-    </div>
-  </section>
+        <h3>Three laws, each with a price attached</h3>
+        <ul>
+          <li><strong>An optimizer converges on your evaluator's defects, not on your objective.</strong> Goodhart is not a risk to mitigate; it is the default output of any search loop given enough iterations.</li>
+          <li><strong>Standard referees check the return side and cannot see a violation on the signal side.</strong> A separate screen passed bootstrap, placebo, a comparator and all thirteen trigger years at +150bp. One look-ahead field removed, it went to &minus;9bp &mdash; indistinguishable from doing nothing. Only an information-set audit catches that class of defect.</li>
+          <li><strong>A green test suite certifies capability presence, not operational effect.</strong> 1,571 passing tests covered sixteen self-improvement mechanisms. In a real multi-hour run, <strong>two of them fired.</strong> The rest were wired, enabled, tested and inert &mdash; most of them killed by a single silently-empty collection at an adapter boundary.</li>
+        </ul>
 
-  <section>
-    <div class="rail">Honest status</div>
-    <div class="body">
-      <h2>What this did and did not achieve</h2>
-      <p>The system runs <strong>two independent execution authorities</strong> against the same account: an autonomous channel the agent drives, and a manual channel driven by a human keystroke. Instrumenting them separately turned out to be the most valuable measurement decision in the project.</p>
-      <p>The account currently sits below its starting balance. The measurement layer attributes effectively all of that drawdown to the <em>manual</em> channel — three unguarded human sessions alone account for more than the total decline. The autonomous channel has deliberately been held at one-tenth size and has not yet been evaluated at scale; its full evaluation begins now, with the account explicitly repurposed as a testbed whose objective is the agent's learning rate rather than returns.</p>
-      <p>I'm stating that carefully rather than favourably. This page previously said the autonomous channel's first full evaluation was running and that the result would be carried here either way. <strong>It ran, and the answer was negative</strong> — the measurement section above <em>is</em> that result. The response was to stop trading it live rather than to keep tuning it, and to rebuild the programme around offline falsification with a stopping rule signed in advance, so a null shuts the track down without needing a fresh act of will. What I have today is a system that could tell me which of its two authorities was destroying capital, that could then tell me its own selection was worth nothing, and a governance layer under which publishing that finding was the default rather than a decision.</p>
-      <p>That distinction is the whole point. Every doctrine above is downstream of a dated failure with a cost attached, recorded with the evidence that produced it and the prediction that would falsify it. The transferable claim is narrow and I'll state it plainly: <strong>I know how to make an agent's behaviour hold up when nobody is watching it, and how to build the measurement that tells you honestly whether it is working</strong> — including when the answer is "not yet."</p>
-    </div>
-  </section>
+        <p>What worked was inverting the order: <strong>validate the validator against a known null before trusting any positive.</strong> Synthetic driftless data, the full gate stack, roughly 66,000 trades, <strong>zero survivors out of thirty</strong>. On data with no edge in it, the evaluator manufactured none. And that pass was recorded with its own honest bound: 0/30 constrains the false-positive rate to about 10%, and no better.</p>
 
-  <section class="close">
-    <div class="rail"></div>
-    <div class="body">
-      <h2>If you're shipping agents that have to run unattended</h2>
-      <p>The pattern I keep seeing is a system that demos beautifully and degrades in week three — obligations that were written down instead of wired in, a delegation boundary that silently drops work, a guard whose own state is a file anyone can edit, and no way to tell the difference between "done" and "reported done."</p>
-      <p>That is the work I do: taking an agent that works when supervised and making it hold when it isn't. Tool and MCP architecture, guardrail and refusal design, memory under a context budget, and the measurement layer that tells you honestly whether any of it is working.</p>
-      <p>The system described here is private and stays that way — it's live. I walk through the code directly on a call.</p>
-      <div class="contact">
-        <a href="mailto:qazwsx321234@gmail.com?subject=Agent%20engineering%20—%20enquiry">qazwsx321234@gmail.com</a>
-      </div>
-    </div>
-  </section>
+        <blockquote><p>If you run an agent loop against an LLM judge or a synthetic eval, this is your problem, not a trading problem.</p></blockquote>
+        <p>The loop will find your judge's blind spots faster than it finds the behaviour you asked for. That is not a warning about a rare edge case; it is the modal outcome, and it is why the pre-registration machinery in the current work exists.</p>
+      </section>
 
+      <!-- ═══════════ control ═══════════ -->
+      <section id="control">
+        <span class="label">The measurement</span>
+        <h2>I built the control group for my own judgment</h2>
+        <p>Across 409 recorded decisions, the system had never scored what it <em>rejected</em>. Every gauge measured the calls it took, so the question underneath all the others &mdash; is the selection carrying any information at all? &mdash; had never actually been asked. So I built the instrument that could ask it: each real decision scored against random entries drawn from the same day, the same direction and the same stop distance, differing only in <em>which minute was chosen</em>.</p>
+
+        <div class="figures" style="max-width:42rem">
+          <div class="fig"><b>0.496</b><span>selection percentile</span></div>
+          <div class="fig"><b>.453&ndash;.540</b><span>95% CI</span></div>
+          <div class="fig"><b>82</b><span>scored decisions</span></div>
+          <div class="fig"><b>0.500</b><span>chance</span></div>
+        </div>
+
+        <p>A clean answer, and worth stating precisely rather than dramatically: at that sample size, no effect is detectable &mdash; which is not the same claim as &ldquo;there is none,&rdquo; and the interval says exactly how large an effect would still have been missed. That is the whole value of building the control. It was the first result in the project that could redirect the programme rather than decorate it, and it did: discretionary live decision-making was narrowed, learning moved offline where a rule can be pre-registered and killed cheaply, and every hypothesis now freezes its specification as a SHA-256 hash in an append-only, hash-chained registry <em>before</em> it may run. The runner refuses to execute if the spec's hash no longer matches the record.</p>
+
+        <h3>Then the new instrument tried to fool me, twice, in one evening</h3>
+        <p>First real use: three textbook mechanical rules, fully specified and frozen in a commit before anything ran. One came back at <strong>0.725, its confidence interval clear of chance</strong> &mdash; a survivor on the first attempt, which is exactly the result I was hoping for.</p>
+        <p>It took one question to kill it. <em>Is this measuring the moment the rule chose, or just where in the local price range it happened to enter?</em> Under a fixed stop with no profit target, an entry below its neighbours has a shorter stop and a longer run to the close &mdash; it beats them <em>arithmetically</em>, whether or not it predicted anything. Every rule's score turned out to be reproduced by entry-price position alone.</p>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Rule</th><th>Score vs time-matched control</th><th>Its entry-price position</th><th>Vs price-matched control</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Breakout</td><td class="num">0.388</td><td class="num">0.361</td><td class="num v-holds">0.484</td></tr>
+              <tr><td>Fade</td><td class="num">0.580</td><td class="num">0.590</td><td class="num v-holds">0.553</td></tr>
+              <tr><td>Reversion</td><td class="num">0.725</td><td class="num">0.857</td><td class="num v-holds">0.618</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Read the third row: the &ldquo;best&rdquo; rule was in fact the one <em>wasting</em> the most favourable entries it had been handed. Once the control matched on price as well as on time, all three collapsed toward chance and the survivor was withdrawn &mdash; into the same append-only ledger that had recorded it, because a registry you can quietly edit is not evidence of anything.</p>
+
+        <div class="panel">
+          <span class="label">And the dashboard kept reporting the dead survivor</span>
+          <p>The pace gauge counted every <em class="t">survived</em> row as current, so appending the withdrawal left the headline still reading <strong>survivors: 1</strong>. An append-only ledger and a gauge that treats every row as current are each individually reasonable and jointly incapable of representing a retraction &mdash; the pair could only ever overstate. Fixed to take the latest verdict per candidate, proved by mutation, and given a regression test that asserts both values: reported while it stands, gone once withdrawn.</p>
+        </div>
+
+        <p>Three further false findings surfaced the same night in the data layer, each one caught by <em>running</em> a check rather than by reading it: an integrity gate excluding the primary instrument over &ldquo;weekend&rdquo; bars that were a timezone convention of my own; a table appearing to show older market history degrading in quality, where every degraded year turned out to be a public holiday; and a cross-feed price comparison reporting a fourteen-point disagreement, because it compared one feed's closing price against the other's within-minute average.</p>
+
+        <blockquote><p>A control group that differs from the treatment in more than one way measures the difference you did not intend.</p></blockquote>
+        <p>If you A/B test agent behaviour, or score a model against an LLM judge, this is the failure mode most likely to cost you: not a broken metric, but a well-built one whose comparison arm quietly differs on a second axis. The tell is that the result is the one you wanted and it arrived sooner than expected. Every number above was produced, published <em>and</em> refuted by the same system inside one evening, and all of it &mdash; the survivor, the withdrawal, and the sensitivity bound attached to each kill &mdash; sits in one hash-chained file whose row count is the multiplicity denominator.</p>
+      </section>
+
+      <!-- ═══════════ governance ═══════════ -->
+      <section id="governance">
+        <span class="label">Governance</span>
+        <h2>Letting an agent modify its own machinery without letting it ratchet</h2>
+        <p>The agent designs and implements its own tooling. That removes the natural over-build alarm, so the constraints have to be structural rather than tasteful.</p>
+
+        <ul>
+          <li><strong>A hard budget on blocking rules.</strong> At most eight things may ever refuse a trade. Adding a ninth requires retiring one. Enforced by an audit that runs at every session close, not by good intentions.</li>
+          <li><strong>Tiered change authority.</strong> Reversible bug fixes ship autonomously. Parameter tunes ship but are logged. Any new per-turn artifact, gate or mechanism requires an explicit proposal. Critically: <em>what a change touches sets its tier, not how the agent narrates it.</em> &ldquo;It's only a knob&rdquo; is not a downgrade.</li>
+          <li><strong>Bright lines that stay proposal-only, permanently.</strong> Capital values, the risk rules, the enforcement budget, anything irreversible.</li>
+          <li><strong>External, non-self-graded refutation.</strong> Any significant design is attacked by a fresh context that never saw the design's framing, given only the proposal and the project's known anti-patterns and told to break it. The verdict is pasted in verbatim. The author does not get to write its own opposition.</li>
+          <li><strong>Ship the gauge with the mechanism.</strong> Every mechanism carries at least one outcome-based success criterion. &ldquo;The gauge fired&rdquo; is not evidence. An audit fails the build if a decision record declares a gate without shipping its measurement.</li>
+          <li><strong>Automatic suspension.</strong> The grant revokes itself if per-turn surface grows without an approved budget raise, if anything ships without its gauge, or if results regress alongside self-authored mechanisms.</li>
+        </ul>
+
+        <p>The first change made under this charter was reviewed by an external pass, found to be redundant and built on a false premise, and <strong>reverted to zero net code</strong>. That is the charter working, not failing.</p>
+
+        <h3>The habit underneath all of it</h3>
+        <p>The single highest-value practice was periodically auditing the system's claims about <em>itself</em> and writing down where they were false, in place, next to the claim being corrected.</p>
+
+        <div class="panel">
+          <span class="label">From the enforcement registry, verbatim</span>
+          <p>The prior &ldquo;audit auto-demotes unused rules&rdquo; clause was <strong>false</strong> &mdash; the field it depended on is empty on every item and no code reads it. Retirement is a manual hand-edit. Do not build the auto-demote; the diagnosis itself warns that such criteria &ldquo;existed on paper and were never exercised.&rdquo;</p>
+        </div>
+
+        <p>Elsewhere: a rule set documented as enforced was audited and found to be enforced in three places, advisory in a fourth, and entirely absent in a fifth &mdash; and the document was rewritten to say so, in bold, rather than quietly patched. Every significant decision record names its own blind spots, its confounds, and the evidence that would invalidate it.</p>
+        <p>This matters more in agent systems than anywhere else I have worked, because an agent will confidently narrate an obligation as satisfied. <strong>Every claim of &ldquo;done&rdquo; that is not derived from ground truth is a claim you will pay for later.</strong></p>
+      </section>
+
+      <!-- ═══════════ engage ═══════════ -->
+      <section id="engage">
+        <span class="label">Working together</span>
+        <h2>What an engagement looks like</h2>
+
+        <h4>The shape</h4>
+        <p>The first piece is fixed-scope and small enough that you can judge the work before committing to more. Text-first and async by default; I take calls where they earn their place rather than as a default meeting rhythm. I work from Spain, on CET, and overlap comfortably with European hours and with US mornings.</p>
+
+        <h4>What you get in the first pass</h4>
+        <p>On an existing agent, the useful opening deliverable is usually an audit against the ladder above: which rung each of your current guards actually sits on, which obligations are written down rather than wired in, where a delegation boundary is dropping work silently, and where your evaluation is measuring something other than what you think it is. That is concrete, it is fast, and it tends to reorder the roadmap.</p>
+
+        <h4>On confidentiality</h4>
+        <p>Everything on this page is a system I built and operate, and none of it is published &mdash; no repository, no code, no proprietary logic, and no client work will ever appear on a page like this one either. The engineering judgment is what I am showing you. Several of these projects are still running and still have road ahead of them, which is exactly why the detail stops where it does.</p>
+
+        <h4>What I would rather not be hired for</h4>
+        <p>Training or fine-tuning custom models, data labelling, and jobs where the real requirement is a full product built to a fixed spec by one person in a fortnight. I would rather tell you that up front than discover it in week two.</p>
+      </section>
+
+      <!-- ═══════════ close ═══════════ -->
+      <section class="close">
+        <h2>If you're shipping agents that have to run unattended</h2>
+        <p>The pattern I keep seeing is a system that demos beautifully and degrades in week three: obligations that were written down instead of wired in, a delegation boundary that silently drops work, a guard whose own state is a file anyone can edit, and no way to tell the difference between <em>done</em> and <em>reported done</em>.</p>
+        <p>That is the work I do &mdash; taking an agent that works when supervised and making it hold when it isn't. Tool and MCP architecture, guardrail and refusal design, memory under a context budget, and the measurement layer that tells you honestly whether any of it is working.</p>
+        <div class="actions">
+          <a class="btn btn--lead" href="mailto:qazwsx321234@gmail.com?subject=Agent%20engineering%20%E2%80%94%20enquiry">qazwsx321234@gmail.com</a>
+        </div>
+      </section>
+
+    </main>
+  </div>
 </div>
+
+<script>
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.index a'));
+    if (!links.length || !('IntersectionObserver' in window)) return;
+    var byId = {};
+    links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+    var seen = {};
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { seen[e.target.id] = e.isIntersecting; });
+      var current = null;
+      Object.keys(byId).forEach(function (id) { if (seen[id] && !current) current = id; });
+      links.forEach(function (a) {
+        a.classList.toggle('is-current', current !== null && a.getAttribute('href') === '#' + current);
+      });
+    }, { rootMargin: '-10% 0px -70% 0px' });
+    Object.keys(byId).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) io.observe(el);
+    });
+  })();
+</script>
 </body>
 </html>
