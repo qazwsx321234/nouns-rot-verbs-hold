@@ -512,12 +512,12 @@
 
         <article class="card">
           <div class="card-top">
-            <span class="chip chip--live">Built &middot; operated &middot; stopped by design</span>
+            <span class="chip chip--live">Built &middot; operated &middot; evolved into the current work</span>
             <span class="label">Apr &rarr; Aug 2026 &middot; sole engineer: design, build, operation</span>
           </div>
           <h3>An AI agent operating unattended against a live account</h3>
-          <p>An orchestrator that read live market data, formed a view, armed conditional triggers, submitted real orders through an MCP tool surface, and scored its own decisions after the close to change how the next session ran. It ran live for four months at a deliberately reduced size, as a testbed whose objective was the agent's learning rate.</p>
-          <p><strong>It is not trading autonomously today, and that is the most useful thing about it.</strong> Its own control group &mdash; described further down &mdash; found no detectable edge in the selection it was making, so the autonomous channel was stopped rather than tuned, and the programme moved offline to falsification. The system that could tell me that is the work; the loop was only where it ran.</p>
+          <p>An orchestrator that read live market data, formed a view, armed conditional triggers, submitted real orders through an MCP tool surface, and scored its own decisions after the close to change how the next session ran. It ran live for four months at a deliberately reduced size, as a testbed whose objective was the agent's learning rate rather than its return.</p>
+          <p><strong>The measurement layer is what I would point at.</strong> It was built to score the decisions the system rejected as well as the ones it took, and when it did, it redirected the programme &mdash; into the pre-registered falsification pipeline described in the next card, which is where the work is now. A system that can tell you to change course is the harder build; the loop was only where it ran.</p>
           <div class="took">
             <span class="label">What it took</span>
             <p>Two MCP servers. One built from scratch: seven tools over a swappable broker backend, a safety layer between the model and the order, and an integration bench simulating broker timeouts, rate limits and kill-switch fire. One third-party server patched in place, because its behaviour was wrong in a way that mattered and waiting for upstream was not an option.</p>
@@ -815,8 +815,8 @@
       <!-- ═══════════ control ═══════════ -->
       <section id="control">
         <span class="label">Field report</span>
-        <h2>Building the control group for my own judgment</h2>
-        <p>Across 409 recorded decisions the system had never scored what it <em>rejected</em>. Every gauge measured the calls it took, so the question underneath all the others had never been asked. I built the instrument that could ask it: each real decision scored against random entries drawn from the same day, the same direction and the same stop distance, differing only in which minute was chosen.</p>
+        <h2>Scoring what the system rejected</h2>
+        <p>Every gauge in the project measured the calls the system took. Across 409 recorded decisions it had never once scored what it <em>rejected</em> &mdash; so the question underneath all the others had never been asked. In August I built the instrument that could ask it: each real decision scored against random entries drawn from the same day, the same direction and the same stop distance, differing only in which minute was chosen.</p>
 
         <div class="figures" style="max-width:42rem">
           <div class="fig"><b>0.496</b><span>selection percentile</span></div>
@@ -825,7 +825,8 @@
           <div class="fig"><b>0.500</b><span>chance</span></div>
         </div>
 
-        <p>Worth stating precisely rather than dramatically: at that sample size no effect is detectable, which is a different claim from &ldquo;there is none&rdquo; &mdash; and the interval says how large an effect would still have been missed. That is the whole value of having built the control. It is the first result in the project that could redirect the programme instead of decorating it, and it did: the autonomous channel was stopped, learning moved offline where a rule can be pre-registered and killed cheaply, and specifications now freeze before they run.</p>
+        <p>That run read 0.496 against a 0.500 chance line, and the honest statement of it is precise rather than dramatic: <strong>at that sample size no effect was detectable</strong> &mdash; a different claim from &ldquo;there is none&rdquo;, with the interval saying how large an effect would still have been missed.</p>
+        <p>Which is what the instrument was for. It produced the first result in the project capable of redirecting the work instead of decorating it, and it did exactly that: selection moved out of a live loop and into an offline pipeline where a rule can be pre-registered, run once and killed cheaply. That pipeline is the current work, and every hypothesis in it now freezes its specification before it is allowed to run.</p>
 
         <h4>Then the new instrument tried to fool me, twice, in one evening</h4>
         <p>First real use: three textbook mechanical rules, fully specified and frozen in a commit before anything ran. One came back at <strong>0.725, its confidence interval clear of chance</strong> &mdash; a survivor on the first attempt, exactly the result I was hoping for.</p>
