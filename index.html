@@ -467,7 +467,7 @@
           </div>
           <div class="cap">
             <span class="cap-name">Tool and MCP architecture</span>
-            <p>Designing and building the tool surface an agent calls, including the unglamorous parts that decide whether it works: what a tool returns when it half-succeeds, where a timeout lands, how a failure gets stopped from being narrated as a success.</p>
+            <p>The tool surface an agent calls, including the unglamorous parts that decide whether it works: what a tool returns when it half-succeeds, where a timeout lands, how a failure is stopped from being narrated as a success.</p>
           </div>
           <div class="cap">
             <span class="cap-name">Guardrails and refusal design</span>
@@ -475,7 +475,7 @@
           </div>
           <div class="cap">
             <span class="cap-name">Evaluation and measurement</span>
-            <p>The layer that tells you whether you have anything: control groups for agent behaviour, replay harnesses that score decisions against blinded historical data, and pre-registration so a result keeps its shape after it arrives.</p>
+            <p>The layer that tells you whether you have anything: control groups for agent behaviour, replay harnesses scoring decisions against blinded historical data, and pre-registration so a result keeps its shape after it arrives.</p>
           </div>
         </div>
 
@@ -696,7 +696,7 @@
 
       <!-- ═══════════ ladder ═══════════ -->
       <section id="ladder">
-        <span class="label">Field report</span>
+        <span class="label">Durability</span>
         <h2>The durability ladder</h2>
         <p>Across 27 fixes I shipped and then tracked, roughly half held and half decayed, and the split fell along one axis: not correctness, not importance, but <strong>the location of authority</strong>.</p>
 
@@ -749,23 +749,23 @@
         </div>
 
         <h4>The permanence test</h4>
-        <p>Does the fix still hold for an actor who never read it? A fresh context inherits the codebase's <em>behaviour</em> and never an instruction's <em>force</em>. Any fix enforced by &ldquo;the actor reads X and chooses to comply&rdquo; is a noun with extra steps, and it will rot the first session the actor is under time pressure or has not loaded X.</p>
+        <p>Does the fix still hold for an actor who never read it? A fresh context inherits the codebase's <em>behaviour</em> and never an instruction's <em>force</em>. Any fix enforced by &ldquo;the actor reads X and chooses to comply&rdquo; is a noun with extra steps,.</p>
 
         <h4>The top rung is conditional</h4>
-        <p>I learned that by being wrong about it. I removed an affordance &mdash; a browser tab that could be disturbed mid-job &mdash; and called that class of bug impossible. It recurred: the removal was itself an action someone had to perform, and on a path nobody had walked it never ran. So the real test is stricter. Is the affordance never created, or is its removal a verb that fires whichever path the actor took? A removal-by-action is rung 2.5, and it fails exactly where you never walked.</p>
+        <p>I learned that by being wrong about it. I removed an affordance &mdash; a browser tab that could be disturbed mid-job &mdash; and called that class of bug impossible. It recurred: the removal was itself an action someone had to perform, and on a path nobody had walked it never ran. So the test is stricter: is the affordance never created, or is its removal a verb that fires whichever path the actor took? A removal-by-action is rung 2.5, and it fails exactly where you never walked.</p>
 
         <h4>Three findings underneath it</h4>
-        <p><strong>A verb guards an action; a rule names a behaviour.</strong> &ldquo;Don't disturb a running job&rdquo; has at least three action-faces: kill it, touch it, over-poll it. I guarded the kill face, marked the behaviour fixed, and the touch face failed weeks later. Enumerate every face a behaviour covered and guard each, or write down which remain unguarded.</p>
-        <p><strong>Recognition needs a chokepoint too.</strong> The deeper problem is that at the moment of recurrence, the lookup <em>have I seen this exact thing before?</em> never fires. I had six dated recurrences of one bug on record and read none of them while diagnosing the seventh.</p>
-        <p><strong>Delegate the work, never the clock.</strong> Nothing self-re-animates a dormant agent. An inline sleep returned early; a live background child did not wake its parent on completion. The durable form of &ldquo;continue this later&rdquo; is the foreground being re-invoked by an automatic harness event.</p>
+        <p><strong>A verb guards an action; a rule names a behaviour.</strong> &ldquo;Don't disturb a running job&rdquo; has three action-faces &mdash; kill it, touch it, over-poll it. I guarded the kill face, marked the behaviour fixed, and the touch face failed weeks later. Enumerate every face, or write down which remain unguarded.</p>
+        <p><strong>Recognition needs a chokepoint too.</strong> At the moment of recurrence the lookup <em>have I seen this exact thing before?</em> never fires. I had six dated recurrences of one bug on record and read none while diagnosing the seventh.</p>
+        <p><strong>Delegate the work, never the clock.</strong> Nothing self-re-animates a dormant agent &mdash; an inline sleep returned early, a background child never woke its parent. The durable form of &ldquo;continue this later&rdquo; is the foreground re-invoked by a harness event.</p>
       </section>
 
       <!-- ═══════════ enforcement ═══════════ -->
       <section id="enforcement">
-        <span class="label">Field report</span>
+        <span class="label">Enforcement</span>
         <h2>Guards and their ceilings</h2>
-        <p>The hardest constraint problem I have worked on is enforcing a limit against an actor with both the access and the motive to route around it. That actor can be a person or an agent; what makes it hard is the same either way, because the guard has to hold at exactly the moment the actor most wants it gone.</p>
-        <p>I built five mechanisms over about two weeks and put each in front of live conditions. Every one has a real ceiling, and the pattern across those ceilings is the transferable finding.</p>
+        <p>The hardest constraint problem I have worked on is enforcing a limit against an actor with both the access and the motive to route around it. Person or agent, it is the same problem: the guard has to hold at exactly the moment the actor most wants it gone.</p>
+        <p>I built five mechanisms and put each in front of live conditions. Every one has a real ceiling, and the pattern across them is the transferable finding.</p>
 
         <div class="scroll">
           <table>
@@ -782,7 +782,7 @@
           </table>
         </div>
 
-        <p>That last row generalizes, and it is the row I would carry into any system with an agent or a person in the loop. <strong>A partial block does not stop the behaviour; it moves it into the channel you cannot see.</strong> Every constraint added to the observed path raises pressure on the unobserved one. Covering most of the surface does not buy most of the protection &mdash; it buys the same behaviour, now invisible, and usually larger. Defend the resource, not the interface.</p>
+        <p>That last row is the one I would carry into any system with an agent or a person in the loop. <strong>A partial block does not stop the behaviour; it moves it into the channel you cannot see.</strong> Covering most of the surface does not buy most of the protection &mdash; it buys the same behaviour, now invisible, and usually larger. Defend the resource, not the interface.</p>
 
         <h4>What did hold</h4>
         <p>A layered posture, correctly labelled. <strong>Friction that announces itself</strong>: a re-entry path that takes ten minutes and cannot be done quietly. <strong>A single instrumented channel</strong>, so every action lands on one recorded surface and diagnosis afterwards is possible at all. And <strong>ground-truth measurement</strong>: judge by the external system's own state, never by your log, because the path you care about leaves no rows in it.</p>
@@ -796,9 +796,9 @@
 
       <!-- ═══════════ evaluator ═══════════ -->
       <section id="evaluator">
-        <span class="label">Field report</span>
+        <span class="label">Evidence</span>
         <h2>When the evaluator is the thing lying to you</h2>
-        <p>Everything above is about making behaviour hold. This is about whether the evidence you decided on was real, and it comes from the research platform &mdash; the one that searched for strategies automatically and scored them against a simulator.</p>
+        <p>Everything above is about making behaviour hold. This is about whether the evidence you decided on was real, and it comes from the research platform.</p>
         <p>Its flagship candidate came back at <strong>Sharpe 13.76, probability of overfitting 0.0%, deflated Sharpe 1.0000</strong>. Every standard referee passed it. It did not survive contact with live execution. The search was not broken: it was optimizing against a simulator with a defect, and the overfitting statistics were computed inside that same defective simulator. Re-run on an honest execution model over the identical 89 sessions, the same candidate inverts to <strong>Sharpe &minus;1.69</strong>. The backtest had been faithfully describing an engine that did not exist.</p>
 
         <h4>Three laws, each with a price attached</h4>
@@ -808,15 +808,15 @@
           <li><strong>A green test suite certifies capability presence, not operational effect.</strong> 1,571 passing tests covered 16 self-improvement mechanisms. In a real multi-hour run, <strong>two of them fired</strong>. The rest were wired, enabled, tested and inert, most killed by a single silently-empty collection at an adapter boundary.</li>
         </ul>
 
-        <p>What worked was inverting the order: <strong>validate the validator against a known null before trusting any positive.</strong> Synthetic driftless data, the full gate stack, roughly 66,000 trades, zero survivors out of thirty. On data with no edge in it the evaluator manufactured none &mdash; and that pass was recorded with its own honest bound, since 0/30 constrains the false-positive rate to about 10% and no better.</p>
+        <p>What worked was inverting the order: <strong>validate the validator against a known null before trusting any positive.</strong> Synthetic driftless data, the full gate stack, roughly 66,000 trades, zero survivors out of thirty. On data with no edge the evaluator manufactured none &mdash; recorded with its own bound, since 0/30 constrains the false-positive rate to about 10% and no better.</p>
         <p>If you run an agent loop against an LLM judge or a synthetic eval, this is your problem and not a trading problem. The loop will find your judge's blind spots faster than it finds the behaviour you asked for.</p>
       </section>
 
       <!-- ═══════════ control ═══════════ -->
       <section id="control">
-        <span class="label">Field report</span>
+        <span class="label">Controls</span>
         <h2>Building the control group: scoring what the system rejected</h2>
-        <p>Every gauge in the project measured the calls the system took. Across 409 recorded decisions it had never once scored what it <em>rejected</em> &mdash; so the question underneath all the others had never been asked. In August I built the instrument that could ask it: each real decision scored against random entries drawn from the same day, the same direction and the same stop distance, differing only in which minute was chosen.</p>
+        <p>Every gauge measured the calls the system took. Across 409 recorded decisions it had never once scored what it <em>rejected</em>, so the question underneath all the others had never been asked. The instrument: each real decision scored against random entries from the same day, same direction and same stop distance, differing only in which minute was chosen.</p>
 
         <div class="figures" style="max-width:42rem">
           <div class="fig"><b>0.496</b><span>selection percentile</span></div>
@@ -826,11 +826,11 @@
         </div>
 
         <p>That run read 0.496 against a 0.500 chance line, and the honest statement of it is precise rather than dramatic: <strong>at that sample size no effect was detectable</strong> &mdash; a different claim from &ldquo;there is none&rdquo;, with the interval saying how large an effect would still have been missed.</p>
-        <p>Which is what the instrument was for. It produced the first result in the project capable of redirecting the work instead of decorating it, and it did exactly that: selection moved out of a live loop and into an offline pipeline where a rule can be pre-registered, run once and killed cheaply. That pipeline is the current work, and every hypothesis in it now freezes its specification before it is allowed to run.</p>
+        <p>Which is what it was for. It produced the first result capable of redirecting the work rather than decorating it, and did: selection moved out of the live loop into an offline pipeline where a rule is pre-registered, run once and killed cheaply. That pipeline is the current work.</p>
 
         <h4>Then the new instrument tried to fool me, twice, in one evening</h4>
-        <p>First real use: three textbook mechanical rules, fully specified and frozen in a commit before anything ran. One came back at <strong>0.725, its confidence interval clear of chance</strong> &mdash; a survivor on the first attempt, exactly the result I was hoping for.</p>
-        <p>It took one question to kill it. <em>Is this measuring the moment the rule chose, or where in the local price range it happened to enter?</em> Under a fixed stop with no profit target, an entry below its neighbours has a shorter stop and a longer run to the close, so it beats them arithmetically whether or not it predicted anything.</p>
+        <p>First real use: three mechanical rules, frozen in a commit before anything ran. One came back at <strong>0.725, its confidence interval clear of chance</strong> &mdash; a survivor on the first attempt, exactly the result I wanted.</p>
+        <p>One question killed it. <em>Is this measuring the moment the rule chose, or where in the local price range it happened to enter?</em> Under a fixed stop with no target, an entry below its neighbours has a shorter stop and a longer run to the close &mdash; it wins arithmetically whether or not it predicted anything.</p>
 
         <div class="scroll">
           <table>
@@ -846,13 +846,13 @@
         </div>
 
         <p>Read the third row: the &ldquo;best&rdquo; rule was the one wasting the most favourable entries it had been handed. Once the control matched on price as well as time, all three collapsed toward chance and the survivor was withdrawn into the same append-only ledger that had recorded it &mdash; and the pace gauge then went on reporting <strong>survivors: 1</strong>, because an append-only log and a read-every-row-as-current gauge are individually reasonable and jointly incapable of representing a retraction. Fixed to take the latest verdict per candidate, proved by mutation, with a regression test asserting both values.</p>
-        <p>Three further false findings surfaced the same night in the data layer, each caught by <em>running</em> a check rather than reading it: an integrity gate excluding the primary instrument over &ldquo;weekend&rdquo; bars that were a timezone convention of my own; a table appearing to show older market history degrading, where every degraded year was a public holiday; and a cross-feed price comparison reporting a fourteen-point disagreement, because it compared one feed's close against the other's within-minute average.</p>
-        <p><strong>A control group that differs from the treatment in more than one way measures the difference you did not intend.</strong> If you A/B test agent behaviour or score a model against an LLM judge, that is the failure most likely to cost you: not a broken metric, but a well-built one whose comparison arm quietly differs on a second axis. The tell is that the result is the one you wanted and it arrived sooner than expected.</p>
+        <p>Three further false findings surfaced the same night, each caught by <em>running</em> a check rather than reading it: an integrity gate excluding the primary instrument over &ldquo;weekend&rdquo; bars that were my own timezone convention; a table appearing to show older history degrading, where every degraded year was a public holiday; and a cross-feed price disagreement of fourteen points, because it compared one feed's close against the other's within-minute average.</p>
+        <p><strong>A control group that differs from the treatment in more than one way measures the difference you did not intend.</strong> If you A/B test agent behaviour, that is the failure most likely to cost you: not a broken metric, but a well-built one whose comparison arm quietly differs on a second axis. The tell is that the result is the one you wanted and it arrived sooner than expected.</p>
       </section>
 
       <!-- ═══════════ governance ═══════════ -->
       <section id="governance">
-        <span class="label">Field report</span>
+        <span class="label">Governance</span>
         <h2>Governance: letting an agent modify its own machinery without letting it ratchet</h2>
         <p>The agent designs and implements its own tooling, which removes the natural over-build alarm, so the constraints have to be structural.</p>
 
@@ -863,7 +863,7 @@
           <li><strong>Ship the gauge with the mechanism.</strong> Every mechanism carries an outcome-based success criterion, and an audit fails the build if a decision record declares a gate without shipping its measurement. &ldquo;The gauge fired&rdquo; is not evidence.</li>
         </ul>
 
-        <p>Underneath all of it is one habit: periodically audit the system's claims about <em>itself</em> and write down where they were false, in place, next to the claim being corrected. A rule set documented as enforced was audited and found to be enforced in some places, advisory in others and absent elsewhere &mdash; and the document was rewritten to say so in bold instead of being quietly patched. This matters more in agent systems than anywhere else I have worked, because an agent will confidently narrate an obligation as satisfied. <strong>Every claim of &ldquo;done&rdquo; that is not derived from ground truth is one you will pay for later.</strong></p>
+        <p>Underneath all of it is one habit: audit the system's claims about <em>itself</em> and write down where they were false, in place, next to the claim being corrected. A rule set documented as enforced was audited and found to be enforced in some places, advisory in others and absent elsewhere &mdash; and the document was rewritten to say so in bold rather than quietly patched. This matters most in agent systems, because an agent will confidently narrate an obligation as satisfied. <strong>Every claim of &ldquo;done&rdquo; that is not derived from ground truth is one you will pay for later.</strong></p>
       </section>
 
       <!-- ═══════════ engage ═══════════ -->
@@ -872,17 +872,17 @@
         <h2>How I work</h2>
 
         <h4>Written-first</h4>
-        <p>You get decisions in a form you can re-read three weeks later instead of a meeting you have to remember. The record is part of what I deliver, and it is the same discipline the systems above run on. Calls when a decision needs one. I am on CET, which overlaps European hours and US mornings.</p>
+        <p>You get decisions in a form you can re-read three weeks later instead of a meeting you have to remember &mdash; the record is part of what I deliver, and it is the same discipline the systems above run on. Calls when a decision needs one. I am on CET, overlapping European hours and US mornings.</p>
 
         <h4>Built to be handed over</h4>
         <p>Every system here was built to be picked up cold by someone who was not there. That constraint is why the operating contract is injected rather than remembered, and why the Unity project prints its own next task with the traps and the done-condition attached and refuses to close it without evidence. If your team has stopped trusting what the agent reports, that handover surface is what I would build first.</p>
 
         <h4>Why I take this work, and the time I have for it</h4>
-        <p>The heavy build on my own systems is behind me. They are automated and they do not need me sitting in front of them, which was the point of building them that way, so the time is real rather than squeezed in around something else.</p>
+        <p>The heavy build on my own systems is behind me. They are automated and do not need me sitting in front of them &mdash; which was the point &mdash; so the time is real rather than squeezed in around something else.</p>
         <p>What contract work gives me is the part I cannot build alone: other people's architectures, other people's constraints, and failure modes I have not met yet. This field moves fast enough that working across it is how the transferable part stays transferable. And I like the work, which is worth saying plainly when you are deciding who to spend six weeks with.</p>
 
         <h4>On what stays private</h4>
-        <p>None of the systems here are published &mdash; no repository, no code, no proprietary logic. That is a policy rather than a gap, and it is the same policy your work would sit under. What I can do instead is walk you through any part of it live, and keep the first piece small enough that you are judging the work.</p>
+        <p>None of the systems here are published &mdash; no repository, no code, no proprietary logic. That is a policy rather than a gap, and it is the same policy your work would sit under. Instead I walk you through any part of it live, and keep the first piece small enough that you are judging the work.</p>
 
         <h4>What I would rather not be hired for</h4>
         <p>Training or fine-tuning custom models, data labelling, and jobs where the real requirement is a full product built to a fixed spec by one person in a fortnight. I would rather say that now than discover it in week two.</p>
