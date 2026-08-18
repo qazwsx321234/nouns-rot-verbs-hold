@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Independent engineer building AI agents that run unattended, the MCP and tool layer underneath them, and the measurement that says honestly whether they work. Selected work, and a field report from running one against a live account.">
+<meta name="description" content="Independent engineer building AI agents that decide and act without a human approving each step, the MCP and tool layer underneath them, and the measurement that says honestly whether they work. Selected work, and a field report from running one against a $100k prop-firm evaluation account.">
 <meta name="author" content="Zorion Arrillaga">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Zorion Arrillaga — agent engineering">
-<meta property="og:description" content="Independent engineer building AI agents that run unattended, the MCP and tool layer underneath them, and the measurement that says honestly whether they work. Selected work, and a field report from running one against a live account.">
+<meta property="og:description" content="Independent engineer building AI agents that decide and act without a human approving each step, the MCP and tool layer underneath them, and the measurement that says honestly whether they work. Selected work, and a field report from running one against a $100k prop-firm evaluation account.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Zorion Arrillaga — agent engineering">
-<meta name="twitter:description" content="Independent engineer building AI agents that run unattended, the MCP and tool layer underneath them, and the measurement that says honestly whether they work. Selected work, and a field report from running one against a live account.">
+<meta name="twitter:description" content="Independent engineer building AI agents that decide and act without a human approving each step, the MCP and tool layer underneath them, and the measurement that says honestly whether they work. Selected work, and a field report from running one against a $100k prop-firm evaluation account.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2226%22 font-size=%2226%22>&#9881;</text></svg>">
 <title>Zorion Arrillaga</title>
 
@@ -417,7 +417,7 @@
   <header class="masthead">
     <span class="label fade fade-1">Zorion Arrillaga &middot; independent engineer &middot; Spain, CET &middot; open to contract work</span>
     <h1 class="fade fade-2">Agents that hold up when nobody is watching.</h1>
-    <p class="deck fade fade-3">I build AI systems end to end &mdash; the agent, the tools underneath it, the guardrails that decide whether it holds, and the measurement that says honestly whether any of it works. I proved that out on my own systems, where a mistake costs real money. The domain was the proving ground, not the specialty; what I want now is the next one.</p>
+    <p class="deck fade fade-3">I build AI systems end to end &mdash; the agent, the tools underneath it, the guardrails that decide whether it holds, and the measurement that says honestly whether any of it works. I proved that out on my own systems, where every failure was recorded and priced in R. The domain was the proving ground, not the specialty; what I want now is the next one.</p>
 
     <dl class="facts">
       <div class="fact">
@@ -468,8 +468,8 @@
 
         <div class="caps">
           <div class="cap">
-            <h3 class="cap-name">Agents that run unattended</h3>
-            <p>Long-running loops that decide and act with nobody in the chair: state derived on every pass, obligations wired into the runtime, and a resume path that survives a context reset in the middle of a task.</p>
+            <h3 class="cap-name">Long-running agents</h3>
+            <p>Long-running loops that decide and act without a human approving each step: state derived on every pass, obligations wired into the runtime, and a resume path that survives a context reset in the middle of a task.</p>
           </div>
           <div class="cap">
             <h3 class="cap-name">Tool and MCP architecture</h3>
@@ -509,7 +509,7 @@
       <!-- ═══════════ work ═══════════ -->
       <section id="work">
         <span class="label">Selected work</span>
-        <h2>Six systems, and what each one took</h2>
+        <h2>The work, and what each one took</h2>
         <p>These are private, live systems, with one exception below whose whole source is the page you can open. What follows is the engineering at the level of detail a technical buyer can judge. I walk through the code directly on a call.</p>
 
         <article class="card">
@@ -517,17 +517,17 @@
             <span class="chip chip--live">Built &middot; operated &middot; evolved into the current work</span>
             <span class="label">Apr &rarr; Aug 2026 &middot; sole engineer: design, build, operation</span>
           </div>
-          <h3>An AI agent operating unattended against a live account</h3>
-          <p>An orchestrator that read live market data, formed a view, armed conditional triggers, submitted real orders through an MCP tool surface, and scored its own decisions after the close to change how the next session ran. It ran live for four months. Partway through I cut size to a tenth and ran the rest as a testbed whose objective was the agent's learning rate rather than its return.</p>
+          <h3>AI agent deciding and executing on a live broker account</h3>
+          <p>An orchestrator that read live market data, formed a view, armed conditional triggers, submitted real orders through an MCP tool surface, and scored its own decisions after the close to change how the next session ran. It ran live sessions for close to four months and traded across 35 trading days, 25 of them on a $100k prop-firm evaluation account; on its own channel it formed the view, armed the trigger and submitted the order without per-trade human approval, running alongside my own. Partway through I cut size to a tenth and ran the rest as a testbed whose objective was the agent's learning rate rather than its return.</p>
           <p><strong>The measurement layer is what I would point at.</strong> Once I had built it to score the decisions the system rejected as well as the ones it took, it redirected the programme &mdash; into the pre-registered falsification pipeline described in the next card, which is where the work is now. A system that can tell you to change course is the harder build; the loop was only where it ran.</p>
           <div class="took">
             <span class="label">What it took</span>
-            <p>Two MCP servers. One built from scratch: seven tools over a swappable broker backend, a safety layer between the model and the order, and an integration bench simulating broker timeouts, rate limits and kill-switch fire. One third-party server patched in place, because its behaviour was wrong in a way that mattered and waiting for upstream was not an option.</p>
+            <p>Two MCP servers. One built from scratch: seven tools over a swappable broker backend, a safety layer between the model and the order, and an integration bench simulating broker timeouts and kill-switch fire. One third-party server patched in place, because its behaviour was wrong in a way that mattered and waiting for upstream was not an option.</p>
             <p>Around that: a per-turn operating contract injected at prompt time so a context reset cannot silently drop it; position state derived from the broker on every read instead of from the agent's own log; lifecycle hooks that refuse an action at the point of action; a delegation layer routing judgment-dense work to separate model seats with model and reasoning effort pinned in version control, so a spawned worker cannot inherit the wrong configuration; retrieval and memory designed to survive a fixed context budget across months; and a completeness contract, schema-validated, that refuses to close a session with an artifact missing.</p>
           </div>
           <div class="figures">
-            <div class="fig"><b>2,200+</b><span>commits</span></div>
-            <div class="fig"><b>90+</b><span>recorded sessions</span></div>
+            <div class="fig"><b>2,290+</b><span>commits</span></div>
+            <div class="fig"><b>78</b><span>recorded sessions</span></div>
             <div class="fig"><b>56</b><span>decision records</span></div>
             <div class="fig"><b>2</b><span>MCP servers</span></div>
           </div>
@@ -559,11 +559,11 @@
             <span class="label">Feb &ndash; Jun 2026 &middot; sole engineer</span>
           </div>
           <h3>An automated research platform, and the simulator that judged it</h3>
-          <p>A strategy-discovery factory running hundreds of search cycles over years of tick data, on top of an execution simulator built to be honest about fills, latency and cost, with a live execution tail deployed to a Chicago VPS. Four months, and the most useful thing it produced was a method.</p>
+          <p>A strategy-discovery factory running search cycles over five years of M15 bars across three FX pairs, on top of an execution simulator built to be honest about fills, latency and cost, with a live execution tail deployed to a Chicago VPS. Four months, and the most useful thing it produced was a method.</p>
           <div class="took">
             <span class="label">What it took</span>
             <p>Distributed Python pipelines and a full validation stack: combinatorially symmetric cross-validation, probability of overfitting, walk-forward, bootstrap and placebo comparators. Its main suite still runs clean &mdash; I re-ran it in August 2026 and 1,041 tests passed, on code I stopped developing in June and on a newer Python than it was written for.</p>
-            <p>The decisive contribution was learning to distrust the referee rather than the result, which is the finding written up further down. The programme was then closed against a stopping rule frozen by hash before any real data was fit, reviewed by four independent adversarial passes, and its infrastructure torn down to zero cost the same day. Closing something on a rule written before you knew the answer is a skill, and it is why the next system starts with pre-registration built in.</p>
+            <p>The decisive contribution was learning to distrust the referee rather than the result, which is the finding written up further down. The programme was then closed against a stopping rule frozen by hash before any real data was fit, reviewed by four adversarial LLM review passes with distinct priors, and its infrastructure torn down to zero cost the same day. Closing something on a rule written before you knew the answer is a skill, and it is why the next system starts with pre-registration built in.</p>
           </div>
           <div class="figures">
             <div class="fig"><b>306</b><span>commits</span></div>
@@ -624,12 +624,12 @@
       <!-- ═══════════ architecture ═══════════ -->
       <section id="architecture">
         <span class="label">Architecture</span>
-        <h2>How an unattended loop is put together</h2>
+        <h2>How the loop is put together</h2>
         <p>The shape below is the one I keep rebuilding, in trading and outside it. Two details carry most of the weight: state is read from ground truth on every pass instead of being carried forward in the model's own summary, and the places where the system can refuse are explicit, few, and sit on the path itself.</p>
 
         <figure>
           <svg viewBox="0 0 760 306" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="dg-title">
-            <title id="dg-title">An unattended agent loop: a ground-truth band feeding a five-stage loop with three explicit refusal points, writing to an append-only record that feeds the next session.</title>
+            <title id="dg-title">An agent loop: a ground-truth band feeding a five-stage loop with three explicit refusal points, writing to an append-only record that feeds the next session.</title>
 
             <defs>
               <marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -896,7 +896,7 @@
 
       <!-- ═══════════ close ═══════════ -->
       <section class="close">
-        <h2>If you're shipping agents that have to run unattended</h2>
+        <h2>If you're shipping agents that have to act without a human in the loop</h2>
         <p>The pattern I keep seeing &mdash; in my own systems, and it is the failure I would look for first in yours &mdash; is a system that demos beautifully and degrades in week three: obligations that were written down instead of wired in, a delegation boundary that silently drops work, a guard whose own state is a file anyone can edit, and no way to tell <em>done</em> from <em>reported done</em>.</p>
         <p>That is the work I do. Tell me what your agent does when nobody is watching it, and I will tell you which rung each of your guards is on.</p>
         <p><strong>Zorion Arrillaga</strong> &mdash; Spain, CET.</p>
